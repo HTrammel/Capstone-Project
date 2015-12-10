@@ -1,0 +1,66 @@
+---
+title: "Running Project Notes"
+author: "Harold Trammel"
+date: "December 9, 2015"
+output: html_document
+---
+
+```{r setup, echo=FALSE}
+require(tm)
+require(RWeka)
+require(openNLP)
+
+```
+
+## Task 0 - Understanding the problem
+
+### Tasks to accomplish
+
+1 Obtain the data (download and manipulate)
+2 Familiarizing yourself with NLP and text mining - Learn about the basics of natural language processing and how it relates to the data science process you have learned in the Data Science Specialization.
+
+### Questions to consider
+
+1 What do the data look like?
+2 Where do the data come from?
+3 Can you think of any other data sources that might help you in this project?
+4 What are the common steps in natural language processing?
+5 What are some common issues in the analysis of text data?
+6 What is the relationship between NLP and the concepts you have learned in the Specialization?
+
+### Activities
+
+`r Sys.Date()`: 
+
+* Zip file downloaded
+* LOCALE.blogs.txt extracted.  "de", "en", "fi", and "ru" locales were extracted.
+* Watched the "welcome" videos
+* Watched the "Understand the Problem" video
+* Watched the "Getting and Cleaning the Data" video
+* Began reading _Text Mining Infrastructure in R_
+* Attempted to load and explore data files
+
+    * used scan with the following:
+    
+    ```
+    scan("Data/en_US.blogs.txt", what="list", nmax=100)
+    ```
+    
+    * used readLines with the following:
+    
+    ``` 
+    con <- file("Data/en_US.blogs.txt","r")
+    readLines(con,1)
+    ```
+
+### Observations
+
+The files we are using are large and not easily read into most editors.
+
+As expected there are misspellings within the random paragraphs.
+
+There are emojis, e.g. :).  Need to decide how to handle those.
+
+The Russian file promises to be a pain in general. 
+
+
