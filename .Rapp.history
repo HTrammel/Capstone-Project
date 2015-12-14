@@ -1,0 +1,147 @@
+n1 <- n2 <- 9#
+x1 <- -3  ##treated#
+x2 <- 1  ##placebo#
+s1 <- 1.5  ##treated#
+s2 <- 1.8  ##placebo#
+spsq <- ( (n1 - 1) * s1^2 + (n2 - 1) * s2^2) / (n1 + n2 - 2)
+spsq
+(3-5) + c(-1,1) * gt(.95, 10+10-2) * .04
+(3-5) + c(-1,1) * qt(.95, 10+10-2) * .04
+n1 <- 10
+n2 <- 10
+sp <- sqrt(((n1-1)*.6^2 + (n2-1) * .68^2)/(n1+n2-2))
+sp
+semd <- sp * sqrt(1/n1+ 1/n2)
+(3-5) + c(-1,1) * qt(.95, 10+10-2) * semd
+sp <- sqrt(((n1-1)*.68^2 + (n2-1) * .6^2)/(n1+n2-2))
+(3-5) + c(-1,1) * qt(.95, 10+10-2) * semd
+-2 * sqrt(100)
+-2 * sqrt(100)/10
+?qt
+qt(.95,8)
+2 + c(-1.1) * qt(.95,8)
+w1 <- c(140,138,150,148,135)
+w2 <- c(132,135,151,146,130)
+?t.test
+t.test(w1,w2,alternative="two.sides", paired=TRUE)
+t.test(w1,w2,alternative="two.sided", paired=TRUE)
+1100 + c(-1,1) * 0.975 * 30 /sqrt(9)
+1100 + c(-1,1) * 0.95 * 30 /sqrt(9)
+1100 + c(-1,1) * qt(.95) * 30 /sqrt(9)
+1100 + c(-1,1) * qt(.95,8) * 30 /sqrt(9)
+?exact.t.test
+1100 + c(-1,1) * 0.975 * 30 /sqrt(9)
+?fisher
+?fisher.t.test
+?pbinom
+pbinom(.75, .95, 8, .5, lower.tail=FLASE)
+pbinom(.75, .95, 8, .5, lower.tail=FALSE)
+pbinom(.75, 8, .5, lower.tail=FLASE)
+pbinom(.75, 8, .5, lower.tail=F)
+pbinom(.75, 8, .5, lower.tail=F]T)
+pbinom(.75, 8, .5, lower.tail=T)
+pbinom(6, 8, .5, lower.tail=T)
+pbinom(6, size=8, prob=0.5, lower.tail=F)
+?ppois()
+10/1787/100
+10/17.87
+ppois(.56,10,lower.tail=F)
+ppois(.56,10,lower.tail=T)
+ppois(.56, 5,lower.tail=T)
+ppois(.56, 10,lower.tail=T)
+ppois(.56, 10,lower.tail=F)
+ppois(.56, 5,lower.tail=F)
+ppois(10/1787*100, 1,lower.tail=F)
+ppois(.56, 1,lower.tail=F)
+ppois(.56, 1,lower.tail=T)
+?t.test
+t <- -3
+p <- 1
+tsd <- 1.5
+psd <- 1.8
+(-3-1)/1.5/sqrt(9)+1.8/sqrt(9)
+t.test(-4,alternative="two.sided",0.5)
+?pnorm
+(-3-1)/sqrt(1.5/9+1.8/9)
+(4)/sqrt(1.5/9+1.8/9)
+1/sqrt(1.5/9+1.8/9)
+?power.t.test()
+power.t.test(100,0.01,0.04,0.05)
+power.t.test(100,0.01,0.04,0.05,alternative="one.sided")
+power.t.test(delta = 0.01, sd = 0.04, sig.level = 0.05, power =0.9, alternative="one.sided")
+power.t.test(n=100,delta=0.01,sd=0.04,sig.level=0.05,alternative="one.sided")
+power.t.test(n=100,delta=0.01,sd=0.04,sig.level=0.95,alternative="one.sided")
+power.t.test(n=100,delta=0.01,sd=0.04,sig.level=0.05,type="pqired", alternative="one.sided")
+power.t.test(n=100,delta=0.01,sd=0.04,sig.level=0.05,type="paired", alternative="one.sided")
+power.t.test(delta = 0.01, sd = 0.04, sig.level = 0.05, power =0.9, alternative="one.sided", type="paired")
+n1 <- n2 <- 9
+x1 <- -3
+x2 <- 1
+s1 <- 1.5
+s2 <- 1.8
+?pt
+pnorm(x1-x2,s1-s2, lower.tail=F)
+pnorm(x1-x2,s1-s2, lower.tail=T)
+s1-s2 * sqrt(1/n1 + 1/n2)
+x1-x2/0.65147
+2 * pnorm(0abs(-4.53499))
+2 * pnorm(-abs(-4.53499))
+pbinom(6, size=8, prob=0.5, lower.tail=F)
+n <- (qnorm(.95) + qnorm(.8) ^ 2 * 0.04 ^ /.01^2)
+n <- (qnorm(.95) + qnorm(.8)) ^ 2 * 0.04 ^ /.01^2
+n <- (qnorm(.95) + qnorm(.8)) ^ 2 * 0.04 ^2 /.01^2
+n
+n <- (qnorm(.95) + qnorm(.9)) ^ 2 * 0.04 ^2 /.01^2
+n
+mn <- mean(mtcars$mpg)#
+s <- sd(mtcars$mpg)#
+z <- qnorm(.05)#
+mu0 <- mn - z * s / sqrt(nrow(mtcars))
+pv <- ppois(15800 - 1, lambda = 520 * 30, lower.tail = FALSE)
+pv <- ppois(10/1787, lambda = 1/100, lower.tail = FALSE)
+pv
+pv <- ppois(10-1/1787, lambda = 1/100, lower.tail = FALSE)
+pv
+pv <- ppois(10/1787, lambda = 1/100, lower.tail = FALSE)
+pv
+pv <- ppois(10/(1787/100), lambda = 1, lower.tail = FALSE)
+pv
+pv <- ppois(9/(1787/100), lambda = 1, lower.tail = FALSE)
+pv
+pv <- ppois(9/1787, lambda = 1/100, lower.tail = FALSE)
+pv
+pnorm(10 / 1787, mean = 1, sd = sqrt(1 / 100), lower.tail = FALSE)
+pv <- ppois(9/17.87, lambda = 1, lower.tail = FALSE)
+pv
+pv <- ppois(10/17.87, lambda = 1, lower.tail = FALSE)
+pv
+?ppois
+pv <- ppois(.95, lambda = 1, lower.tail = FALSE)
+pv
+pv <- ppois(.95, lambda = 1/100, lower.tail = FALSE)
+pv
+pnorm(.95, -4, -.3)
+pnorm(.95, 4, .3)
+10/1787
+1/100 - 10/1787
+pnorm(.9725, -4, 1.5)
+pnorm(.9725, 1, 1.8)
+pnorm(.9725, -4, 1.5) - pnorm(.9725, 1, 1.8)/18
+cd ../
+setwd("/Users/harold/Github/Coursera/Capstone-Project/")
+library(tm)
+library(filehashSQLlite)
+install.packages(filehashSQLite)
+install.packages("filehashSQLite")
+dir()
+source("explore_tm.R")
+tdm <- TermDocumentMatrix(pc, control=list(tokenize = NGramTokenizer))
+tdm <- TermDocumentMatrix("en_US.news.txt", control=list(tokenize = NGramTokenizer))
+meta(pc)
+source("explore_tm.R")
+?RSQLite
+dbDisconnect(s)
+dbDisconnect(db)
+source("explore_tm.R")
+source("explore_tm.R")
+source("explore_tm.R")
