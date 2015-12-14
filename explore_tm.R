@@ -1,33 +1,29 @@
 require(tm)
 require(stringr)
 
+
+# --- Setup ---
 if (!file.exists("Data")) { dir.create("Data") }
 
-library(filehashSQLite)
-# this string becomes filename, must not contain dots.
+data_dir <- "Data"
+full_src <- "Data/Coursera-SwiftKey.zip"
+en_blg_c_rds <- paste(data_dir, "USblogs.Rds", sep="/")
+en_nws_c_rds <- paste(data_dir, "USnews.Rds", sep="/")
+en_twt_c_rds <- paste(data_dir, "UStwitter.Rds", sep="/")
+us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
 
-s <- "Data/sqldb_pcorpus_en_US"
+en_blogs <- "en_US.blogs.txt"
+en_news <- "en_US.news.txt"
+en_twit <- "en_US.twitter.txt"
 
-suppressMessages(library(filehashSQLite))
-
-if(! file.exists(s)){
-    pc = PCorpus(ZipSource("Data/Coursera-SwiftKey.zip", recursive = T), readerControl = list(language = "en"), dbControl = list(dbName = s, dbType = "SQLite"))
-    dbCreate(s, "SQLite")
-    db <- dbInit(s, "SQLite")
-    set.seed(234)
+if (!file.exists(us_corpus_rds)) {
+    us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", recursive = T), readerControl = list(language = "en"))
+    saveRDS(us_corpus, us_corpus_rds)
 } else {
-    db <- dbInit(s, "SQLite")
-    pc <- dbLoad(db)
+    us_corpus <- readRDS(us_corpus_rds)
 }
 
-show(pc)
 
-# # remove it
-# rm(db)
-# rm(pc)
-#
-# #reload it
-# db <- dbInit(s, "SQLite")
-# pc <- dbLoad(db)
-#
-# show(pc)
+# news_tdm <- TermDocumentMatrix(news_c,
+#                           control = list(removePunctuation = T,
+#                                          stopwords = T))
