@@ -27,45 +27,47 @@ if (!file.exists(en_blg_rds)) {
     con <- file(en_news, open="rb")
     tmp <- readLines(con, encoding="UTF-8")
     close(con)
-    USblogs <- data.frame(1:length(tmp),tmp)
+    USblogs <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
     names(USblogs) <- c("txt_num","txt_val")
     saveRDS(USblogs, en_blg_rds)
-    #rm(tmp)
+    rm(tmp)
     rm(con)
 } else {
     USblogs <- readRDS(en_blg_rds)
 }
 
-# if (!file.exists(en_nws_rds)) {
-#     con <- file(en_news, open="rb")
-#     tmp <- readLines(con, encoding="UTF-8")
-#     close(con)
-#     USnews  <- data.frame(as.list(tmp))
-#     saveRDS(USnews, en_nws_rds)
-#     rm(tmp)
-#     rm(con)
-# } else {
-#     USnews <- readRDS(en_nws_rds)
-# }
+if (!file.exists(en_nws_rds)) {
+    con <- file(en_news, open="rb")
+    tmp <- readLines(con, encoding="UTF-8")
+    close(con)
+    USnews  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
+    names(USnews) <- c("txt_num","txt_val")
+    saveRDS(USnews, en_nws_rds)
+    rm(tmp)
+    rm(con)
+} else {
+    USnews <- readRDS(en_nws_rds)
+}
 
-# if (!file.exists(en_twt_rds)) {
-#     con <- file(en_news, open="rb")
-#     tmp <- readLines(con, encoding="UTF-8")
-#     close(con)
-#     UStwitter <- data.frame(as.list(tmp))
-#     saveRDS(UStwitter, en_twt_rds)
-#     rm(tmp)
-#     rm(con)
-# } else {
-#     UStwitter <- readRDS(en_twt_rds)
-# }
+if (!file.exists(en_twt_rds)) {
+    con <- file(en_news, open="rb")
+    tmp <- readLines(con, encoding="UTF-8")
+    close(con)
+    UStwitter <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
+    names(UStwitter) <- c("txt_num","txt_val")
+    saveRDS(UStwitter, en_twt_rds)
+    rm(tmp)
+    rm(con)
+} else {
+    UStwitter <- readRDS(en_twt_rds)
+}
 
-# if (!file.exists(us_corpus_rds)) {
-#     us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", pattern="en.US", recursive = T), readerControl = list(language = "en"))
-#     saveRDS(us_corpus, us_corpus_rds)
-# } else {
-#     us_corpus <- readRDS(us_corpus_rds)
-# }
+if (!file.exists(us_corpus_rds)) {
+    us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", pattern="en.US", recursive = T), readerControl = list(language = "en"))
+    saveRDS(us_corpus, us_corpus_rds)
+} else {
+    us_corpus <- readRDS(us_corpus_rds)
+}
 
 
 #rm(c(tmp,con))
