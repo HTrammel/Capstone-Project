@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------
 #
-# Explore.R
+# load_corpus.R
 #
 # Purpose: Explore text files provided for class
 # NOTE: rJava requires 32-bit R because I have 32-bit Java
@@ -23,15 +23,22 @@ en_nws_rds <- paste(data_dir, "USnews.Rds", sep="/")
 en_twt_rds <- paste(data_dir, "UStwitter.Rds", sep="/")
 us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
 
+play_set <- function(df) {
+    set.seed(12345)
+    inPlay <- rbinom(nrow(df),1,0.1)
+    df[inPlay,]
+}
+
+
 if (!file.exists(en_blg_rds)) {
     con <- file(en_news, open="rb")
     tmp <- readLines(con, encoding="UTF-8")
     close(con)
-    USblogs <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(USblogs) <- c("txt_num","txt_val")
+    df <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
+    names(df) <- c("txt_num","txt_val")
+    USblogs <- play_set(df)
     saveRDS(USblogs, en_blg_rds)
-    rm(tmp)
-    rm(con)
+    rm(list=c("tmp","con","df"))
 } else {
     USblogs <- readRDS(en_blg_rds)
 }
@@ -40,11 +47,11 @@ if (!file.exists(en_nws_rds)) {
     con <- file(en_news, open="rb")
     tmp <- readLines(con, encoding="UTF-8")
     close(con)
-    USnews  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(USnews) <- c("txt_num","txt_val")
+    df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
+    names(df) <- c("txt_num","txt_val")
+    USnews <- play_set(df)
     saveRDS(USnews, en_nws_rds)
-    rm(tmp)
-    rm(con)
+    rm(list=c("tmp","con","df"))
 } else {
     USnews <- readRDS(en_nws_rds)
 }
@@ -53,21 +60,21 @@ if (!file.exists(en_twt_rds)) {
     con <- file(en_news, open="rb")
     tmp <- readLines(con, encoding="UTF-8")
     close(con)
-    UStwitter <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(UStwitter) <- c("txt_num","txt_val")
+    df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
+    names(df) <- c("txt_num","txt_val")
+    UStwitter <- play_set(df)
     saveRDS(UStwitter, en_twt_rds)
-    rm(tmp)
-    rm(con)
+    rm(list=c("tmp","con","df"))
 } else {
     UStwitter <- readRDS(en_twt_rds)
 }
 
-if (!file.exists(us_corpus_rds)) {
-    us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", pattern="en.US", recursive = T), readerControl = list(language = "en"))
-    saveRDS(us_corpus, us_corpus_rds)
-} else {
-    us_corpus <- readRDS(us_corpus_rds)
-}
+# if (!file.exists(us_corpus_rds)) {
+#     us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", pattern="en.US", recursive = T), readerControl = list(language = "en"))
+#     saveRDS(us_corpus, us_corpus_rds)
+# } else {
+#     us_corpus <- readRDS(us_corpus_rds)
+# }
 
 
 #rm(c(tmp,con))

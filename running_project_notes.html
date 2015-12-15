@@ -68,22 +68,30 @@ img {
 
 
 <pre><code>## Loading required package: tm
-## Loading required package: NLP
-## Loading required package: RWeka
-## Loading required package: openNLP</code></pre>
+## Loading required package: NLP</code></pre>
 <div id="task-0---understanding-the-problem" class="section level2">
 <h2>Task 0 - Understanding the problem</h2>
 <div id="tasks-to-accomplish" class="section level3">
 <h3>Tasks to accomplish</h3>
-<p>1 Obtain the data (download and manipulate) 2 Familiarizing yourself with NLP and text mining - Learn about the basics of natural language processing and how it relates to the data science process you have learned in the Data Science Specialization.</p>
+<ul>
+<li>Obtain the data (download and manipulate)</li>
+<li>Familiarizing yourself with NLP and text mining - Learn about the basics of natural language processing and how it relates to the data science process you have learned in the Data Science Specialization.</li>
+</ul>
 </div>
 <div id="questions-to-consider" class="section level3">
 <h3>Questions to consider</h3>
-<p>1 What do the data look like? 2 Where do the data come from? 3 Can you think of any other data sources that might help you in this project? 4 What are the common steps in natural language processing? 5 What are some common issues in the analysis of text data? 6 What is the relationship between NLP and the concepts you have learned in the Specialization?</p>
+<ul>
+<li>What do the data look like?</li>
+<li>Where do the data come from?</li>
+<li>Can you think of any other data sources that might help you in this project?</li>
+<li>What are the common steps in natural language processing?</li>
+<li>What are some common issues in the analysis of text data?</li>
+<li>What is the relationship between NLP and the concepts you have learned in the Specialization?</li>
+</ul>
 </div>
 <div id="activities" class="section level3">
 <h3>Activities</h3>
-<p>2015-12-09:</p>
+<p>2015-12-15:</p>
 <ul>
 <li>Zip file downloaded</li>
 <li>LOCALE.blogs.txt extracted. “de”, “en”, “fi”, and “ru” locales were extracted.</li>
@@ -101,6 +109,7 @@ img {
 </ul>
 <pre><code>con &lt;- file(&quot;Data/en_US.blogs.txt&quot;,&quot;r&quot;)
 readLines(con,1)</code></pre></li>
+<li><p>Created the variables for all of the folders and files.</p></li>
 </ul>
 </div>
 <div id="observations" class="section level3">
@@ -109,7 +118,95 @@ readLines(con,1)</code></pre></li>
 <li>The files we are using are large and not easily read into most editors.</li>
 <li>As expected there are misspellings within the random paragraphs.</li>
 <li>There are emojis, e.g. :). Need to decide how to handle those.</li>
+<li>The Russian file promises to be a pain in general.</li>
+<li>I have to figure out the test, validation, and training sets.</li>
+<li>I need to have cross-validation that can withstand several runs</li>
 </ul>
+</div>
+</div>
+<div id="task-1---data-acquisition-and-cleaning" class="section level2">
+<h2>Task 1 - Data acquisition and cleaning</h2>
+<p>Large databases comprising of text in a target language are commonly used when generating language models for various purposes. In this exercise, you will use the English database but may consider three other databases in German, Russian and Finnish.</p>
+<p>The goal of this task is to get familiar with the databases and do the necessary cleaning. After this exercise, you should understand what real data looks like and how much effort you need to put into cleaning the data. When you commence on developing a new language, the first thing is to understand the language and its peculiarities with respect to your target. You can learn to read, speak and write the language. Alternatively, you can study data and learn from existing information about the language through literature and the internet. At the very least, you need to understand how the language is written: writing script, existing input methods, some phonetic knowledge, etc.</p>
+<p>Make sure you have downloaded the data from Coursera before heading for the exercises. This exercise uses the files named LOCALE.blogs.txt where LOCALE is the each of the four locales en_US, de_DE, ru_RU and fi_FI. The data is from a corpus called HC Corpora (www.corpora.heliohost.org). See the readme file at <a href="http://www.corpora.heliohost.org/aboutcorpus.html" class="uri">http://www.corpora.heliohost.org/aboutcorpus.html</a> for details on the corpora available. Note, download the data from the Coursera site. The files have been language filtered but may still contain some foreign text.</p>
+<p>Note that the data contain words of offensive and profane meaning. They are left there intentionally to highlight the fact that the developer has to work on them.</p>
+<div id="tasks-to-accomplish-1" class="section level3">
+<h3>Tasks to accomplish</h3>
+<p><strong>Tokenization</strong> - identifying appropriate tokens such as words, punctuation, and numbers. Writing a function that takes a file as input and returns a tokenized version of it.</p>
+<p><strong>Profanity filtering</strong> - removing profanity and other words you do not want to predict.</p>
+</div>
+<div id="questions-to-consider-1" class="section level3">
+<h3>Questions to consider</h3>
+<ul>
+<li>How should you handle punctuation?</li>
+<li>The data contains lots of times, dates, numbers and currency values. How to handle these? Are they useful for prediction?</li>
+<li>How do you find typos in the data?</li>
+<li>How do you identify garbage, or the wrong language?</li>
+<li>How do you define profanity? How do you ensure you don’t remove words you want to include?</li>
+<li>How do you handle capital and lower cases?</li>
+<li>What is the best set of features you might use to predict the next word?</li>
+</ul>
+</div>
+<div id="data-acquisition-and-cleaning" class="section level3">
+<h3>Data acquisition and cleaning</h3>
+<div id="tips-and-hints" class="section level4">
+<h4>Tips and hints</h4>
+<p>The data sets for this project are reasonably large. It may cause problems for your computer if you try to read the whole data set in at once. You can use the file() and readLines() functions to read a fixed number of lines into R to begin your exploration.</p>
+</div>
+</div>
+</div>
+<div id="task-2---exploratory-analysis" class="section level2">
+<h2>Task 2 - Exploratory analysis</h2>
+<p>The first step in building a predictive model for text is understanding the distribution and relationship between the words, tokens, and phrases in the text. The goal of this task is to understand the basic relationships you observe in the data and prepare to build your first linguistic models.</p>
+<div id="tasks-to-accomplish-2" class="section level3">
+<h3>Tasks to accomplish</h3>
+<p><strong>Exploratory analysis</strong> - perform a thorough exploratory analysis of the data, understanding the distribution of words and relationship between the words in the corpora.</p>
+<p><strong>Understand frequencies of words and word pairs</strong> - build figures and tables to understand variation in the frequencies of words and word pairs in the data.</p>
+</div>
+<div id="questions-to-consider-2" class="section level3">
+<h3>Questions to consider</h3>
+<ul>
+<li>Some words are more frequent than others - what are the distributions of word frequencies?</li>
+<li>What are the frequencies of 2-grams and 3-grams in the dataset?</li>
+<li>How many unique words do you need in a frequency sorted dictionary to cover 50% of all word instances in the language? 90%?</li>
+<li>How do you evaluate how many of the words come from foreign languages?</li>
+<li>Can you think of a way to increase the coverage – identifying words that may not be in the corpora or using a smaller number of words in the dictionary to cover the same number of phrases?</li>
+</ul>
+</div>
+<div id="exploratory-analysis" class="section level3">
+<h3>Exploratory analysis</h3>
+<div id="tips-and-hints-1" class="section level4">
+<h4>Tips and hints</h4>
+<p>Consider how you are going to perform your basic exploratory and predictive analyses. Keep in mind that the first n rows of the data set may not be representative. You might want to think about how to sample the data using file() and readLines() to obtain a representative sample.</p>
+<p>Think hard about ways you can “compress” the data, what words appear frequently? What combinations of words appear frequently? Later, when you build the R model object, it will need to be small enough to upload to a Shiny server. The more you can figure out how to compress the data the smaller this object will be.</p>
+</div>
+</div>
+</div>
+<div id="task-3---modeling" class="section level2">
+<h2>Task 3 - Modeling</h2>
+<p>The goal here is to build your first simple model for the relationship between words. This is the first step in building a predictive text mining application. You will explore simple models and discover more complicated modeling techniques.</p>
+<div id="tasks-to-accomplish-3" class="section level3">
+<h3>Tasks to accomplish</h3>
+<p><strong>Build basic n-gram model</strong> - using the exploratory analysis you performed, build a basic n-gram model (<a href="http://en.wikipedia.org/wiki/N-gram" class="uri">http://en.wikipedia.org/wiki/N-gram</a>) for predicting the next word based on the previous 1, 2, or 3 words.</p>
+<p><strong>Build a model to handle unseen n-grams</strong> - in some cases people will want to type a combination of words that does not appear in the corpora. Build a model to handle cases where a particular n-gram isn’t observed.</p>
+</div>
+<div id="questions-to-consider-3" class="section level3">
+<h3>Questions to consider</h3>
+<ul>
+<li>How can you efficiently store an n-gram model (think Markov Chains)?</li>
+<li>How can you use the knowledge about word frequencies to make your model smaller and more efficient?</li>
+<li>How many parameters do you need (i.e. how big is n in your n-gram model)?</li>
+<li>Can you think of simple ways to “smooth” the probabilities (think about giving all n-grams a non-zero probability even if they aren’t observed in the data) ?</li>
+<li>How do you evaluate whether your model is any good?</li>
+<li>How can you use backoff models to estimate the probability of unobserved n-grams?</li>
+</ul>
+</div>
+<div id="modeling" class="section level3">
+<h3>Modeling</h3>
+<div id="tips-and-hints-2" class="section level4">
+<h4>Tips and hints</h4>
+<p>Think about starting simply, using your sampled data - what would be your first choice word prediction if you only knew the frequency of each individual word? How would you build the model if you were predicting using only one previous word?</p>
+</div>
 </div>
 </div>
 
