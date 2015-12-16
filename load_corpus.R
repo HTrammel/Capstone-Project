@@ -23,12 +23,22 @@ en_nws_rds <- paste(data_dir, "USnews.Rds", sep="/")
 en_twt_rds <- paste(data_dir, "UStwitter.Rds", sep="/")
 us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
 tdm_rds <- paste(data_dir, "tdm.Rds", sep="/")
+dtm_rds <- paste(data_dir, "dtm.Rds", sep="/")
 
 play_set <- function(df) {
     set.seed(12345)
     inPlay <- rbinom(nrow(df),1,0.1)
     df[inPlay,]
 }
+
+strsplit_space_tokenizer <- function(x)
+    unlist(strsplit(as.character(x), "[[:space:]]+"))
+
+ctrl <- list(tokenize = strsplit_space_tokenizer,
+             removePunctuation = list(preserve_intra_word_dashes = TRUE),
+             stopwords = c("reuter", "that"),
+             stemming = TRUE,
+             wordLengths = c(4, Inf))
 
 
 if (!file.exists(en_blg_rds)) {
@@ -73,11 +83,27 @@ if (!file.exists(en_twt_rds)) {
     UStwitter <- readRDS(en_twt_rds)
 }
 
-us_corpus <- c(blog_corpus, news_corpus, twit_corpus)
-saveRDS(us_corpus, us_corpus_rds)
+if (!file.exists(us_corpus_rds)) {
+    us_corpus <- c(blog_corpus, news_corpus, twit_corpus)
+    saveRDS(us_corpus, us_corpus_rds)
+} else {
+    us_corpus <- readRDS(us_corpus_rds)
+}
 
-tdm <- TermDocumentMatrix(us_corpus)
-saveRDS(tdm, tdm_rds)
+if (!file.exists(tdm_rds)) {
+    tdm <- TermDocumentMatrix(us_corpus, control = ctrl)
+    saveRDS(tdm, tdm_rds)
+} else {
+    us_corpus <- readRDS(tdm_rds)
+}
+
+if (!file.exists(dtm_rds)) {
+    dtm <- DocumentTermMatrix(us_corpus)
+    saveRDS(dtm, dtm_rds)
+} else {
+    us_corpus <- readRDS(dtm_rds)
+}
+
 
 #rm(c(tmp,con))
 
