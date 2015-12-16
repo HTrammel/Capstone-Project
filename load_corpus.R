@@ -22,6 +22,7 @@ en_blg_rds <- paste(data_dir, "USblogs.Rds", sep="/")
 en_nws_rds <- paste(data_dir, "USnews.Rds", sep="/")
 en_twt_rds <- paste(data_dir, "UStwitter.Rds", sep="/")
 us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
+tdm_rds <- paste(data_dir, "tdm.Rds", sep="/")
 
 play_set <- function(df) {
     set.seed(12345)
@@ -37,6 +38,7 @@ if (!file.exists(en_blg_rds)) {
     df <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
     names(df) <- c("txt_num","txt_val")
     USblogs <- play_set(df)
+    blog_corpus <- Corpus(DataframeSource(USblogs))
     saveRDS(USblogs, en_blg_rds)
     rm(list=c("tmp","con","df"))
 } else {
@@ -50,6 +52,7 @@ if (!file.exists(en_nws_rds)) {
     df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
     names(df) <- c("txt_num","txt_val")
     USnews <- play_set(df)
+    news_corpus <- Corpus(DataframeSource(USnews))
     saveRDS(USnews, en_nws_rds)
     rm(list=c("tmp","con","df"))
 } else {
@@ -63,19 +66,18 @@ if (!file.exists(en_twt_rds)) {
     df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
     names(df) <- c("txt_num","txt_val")
     UStwitter <- play_set(df)
+    twit_corpus <- Corpus(DataframeSource(UStwitter))
     saveRDS(UStwitter, en_twt_rds)
     rm(list=c("tmp","con","df"))
 } else {
     UStwitter <- readRDS(en_twt_rds)
 }
 
-# if (!file.exists(us_corpus_rds)) {
-#     us_corpus <- Corpus(ZipSource("Data/Coursera-SwiftKey.zip", pattern="en.US", recursive = T), readerControl = list(language = "en"))
-#     saveRDS(us_corpus, us_corpus_rds)
-# } else {
-#     us_corpus <- readRDS(us_corpus_rds)
-# }
+us_corpus <- c(blog_corpus, news_corpus, twit_corpus)
+saveRDS(us_corpus, us_corpus_rds)
 
+tdm <- TermDocumentMatrix(us_corpus)
+saveRDS(tdm, tdm_rds)
 
 #rm(c(tmp,con))
 
