@@ -13,9 +13,14 @@ require(stringr)
 if (!file.exists("Data")) { dir.create("Data") }
 
 en_dir <- "Data/final/en_US"
-en_blogs <- paste(en_dir, "en_US.blogs.txt", sep="/")
-en_news <- paste(en_dir, "en_US.news.txt", sep="/")
-en_twit <- paste(en_dir, "en_US.twitter.txt", sep="/")
+
+blogs_txt <- "en_US.blogs.txt"
+news_txt <- "en_US.news.txt"
+twit_txt <- "en_US.twitter.txt"
+
+en_blogs <- paste(en_dir, blogs_txt, sep="/")
+en_news <- paste(en_dir, news_txt, sep="/")
+en_twit <- paste(en_dir, twit_txt, sep="/")
 
 data_dir <- "Data"
 en_blg_rds <- paste(data_dir, "USblogs.Rds", sep="/")
@@ -25,62 +30,53 @@ us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
 tdm_rds <- paste(data_dir, "tdm.Rds", sep="/")
 dtm_rds <- paste(data_dir, "dtm.Rds", sep="/")
 
-play_set <- function(df) {
-    set.seed(12345)
-    inPlay <- rbinom(nrow(df),1,0.1)
-    df[inPlay,]
+# strsplit_space_tokenizer <- function(x)
+#     unlist(strsplit(as.character(x), "[[:space:]]+"))
+
+# ctrl <- list(tokenize = strsplit_space_tokenizer,
+#              removePunctuation = list(preserve_intra_word_dashes = TRUE),
+#              stemming = FALSE)
+
+get_lines <- function(c) {
+    maxlines <- 20000
+    out <- readLines(con, n=maxlines, encoding="UTF-8")
 }
-
-strsplit_space_tokenizer <- function(x)
-    unlist(strsplit(as.character(x), "[[:space:]]+"))
-
-ctrl <- list(tokenize = strsplit_space_tokenizer,
-             removePunctuation = list(preserve_intra_word_dashes = TRUE),
-             stopwords = c("reuter", "that"),
-             stemming = TRUE,
-             wordLengths = c(4, Inf))
 
 
 if (!file.exists(en_blg_rds)) {
     con <- file(en_news, open="rb")
-    tmp <- readLines(con, encoding="UTF-8")
+    tmp <- get_lines(con)
     close(con)
-    df <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(df) <- c("txt_num","txt_val")
-    USblogs <- play_set(df)
-    blog_corpus <- Corpus(DataframeSource(USblogs))
-    saveRDS(USblogs, en_blg_rds)
-    rm(list=c("tmp","con","df"))
+    blog_corpus <- VCorpus(DirSource(directory=en_dir, encoding="UTF-8", pattern=blogs_txt),
+                            readerControl = list(reader = readPlain))
+    saveRDS(blog_corpus, en_blg_rds)
+    rm(list=c("tmp","con"))
 } else {
-    USblogs <- readRDS(en_blg_rds)
+    blog_corpus <- readRDS(en_blg_rds)
 }
 
 if (!file.exists(en_nws_rds)) {
     con <- file(en_news, open="rb")
-    tmp <- readLines(con, encoding="UTF-8")
+    tmp <- get_lines(con)
     close(con)
-    df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(df) <- c("txt_num","txt_val")
-    USnews <- play_set(df)
-    news_corpus <- Corpus(DataframeSource(USnews))
-    saveRDS(USnews, en_nws_rds)
-    rm(list=c("tmp","con","df"))
+    news_corpus <- VCorpus(DirSource(directory=en_dir, encoding="UTF-8", pattern=news_txt),
+                            readerControl = list(reader = readPlain))
+    saveRDS(news_corpus, en_nws_rds)
+    rm(list=c("tmp","con"))
 } else {
-    USnews <- readRDS(en_nws_rds)
+    news_corpus <- readRDS(en_nws_rds)
 }
 
 if (!file.exists(en_twt_rds)) {
     con <- file(en_news, open="rb")
-    tmp <- readLines(con, encoding="UTF-8")
+    tmp <- get_lines(con)
     close(con)
-    df  <- data.frame(1:length(tmp),tmp,stringsAsFactors = F)
-    names(df) <- c("txt_num","txt_val")
-    UStwitter <- play_set(df)
-    twit_corpus <- Corpus(DataframeSource(UStwitter))
-    saveRDS(UStwitter, en_twt_rds)
-    rm(list=c("tmp","con","df"))
+    twit_corpus <- VCorpus(DirSource(directory=en_dir, encoding="UTF-8", pattern=twit_txt),
+                            readerControl = list(reader = readPlain))
+    saveRDS(twit_corpus, en_twt_rds)
+    rm(list=c("tmp","con"))
 } else {
-    UStwitter <- readRDS(en_twt_rds)
+    twit_corpus <- readRDS(en_twt_rds)
 }
 
 if (!file.exists(us_corpus_rds)) {
@@ -90,12 +86,12 @@ if (!file.exists(us_corpus_rds)) {
     us_corpus <- readRDS(us_corpus_rds)
 }
 
-if (!file.exists(tdm_rds)) {
-    tdm <- TermDocumentMatrix(us_corpus, control = ctrl)
-    saveRDS(tdm, tdm_rds)
-} else {
-    us_corpus <- readRDS(tdm_rds)
-}
+# if (!file.exists(tdm_rds)) {
+#     tdm <- TermDocumentMatrix(us_corpus, control = ctrl)
+#     saveRDS(tdm, tdm_rds)
+# } else {
+#     us_corpus <- readRDS(tdm_rds)
+# }
 
 if (!file.exists(dtm_rds)) {
     dtm <- DocumentTermMatrix(us_corpus)
