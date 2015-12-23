@@ -1,0 +1,33 @@
+---
+title: "Guess the word ShinyApp"
+author: "Harold Trammel"
+date: "December 18, 2015"
+output: html_document
+---
+
+## Use Cases
+
+#### User
+
+* The user enters three words in a text entry area, press submit, and a list of possible choices appear with their probablity.
+
+#### System
+
+* The system will need to catch errors, which need to be defined.
+* If the word count equals three, the entered words are used as predictors for the next word.  
+* If the word count not equal to three, raise error state.
+* As there will likely be more than one option, display the options in descending order of probablility.
+* Profanity should not be accepted.
+* The system counts the words based on space between words.  Punctuation between words should be eliminated.
+
+## Needed Components
+
+The tab based approach from my previous classes should work well. I need to grab a copy of that work and put it here.
+
+### Main Tab
+
+There must be a text entry area.
+There must be a submit button.
+There must be a display area.
+
+### Help Tab

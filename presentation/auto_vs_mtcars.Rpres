@@ -1,0 +1,106 @@
+
+Auto (ISLR) vs. MTCars
+========================================================
+author: Harold L Trammel
+date: Nov. 22, 2015
+
+```{r global_options, include=TRUE, echo=FALSE}
+knitr::opts_chunk$set(fig.path='Figs/',
+                    echo=FALSE, 
+                    warning=FALSE, 
+                    message=FALSE)
+options(scipen=1, digits=4)
+```
+```{r load-and-process}
+library(ISLR)
+library(dplyr)
+library(ggplot2)
+library(xtable)
+
+data("Auto")
+data("mtcars")
+
+auto <- Auto
+cars <- mtcars
+
+mt_names <- names(cars)
+isl_names <- names(auto)
+
+num_isl_var <- length(auto[1,])
+num_isl_obs <- length(auto[,1])
+
+num_mtc_var <- length(cars[1,])
+num_mtc_obs <- length(cars[,1])
+
+mt_fit <- lm(mpg ~ wt + disp + hp + cyl + qsec, data=cars)
+mt_sum <- summary(mt_fit)
+
+isl_fit <- lm(mpg ~ weight + displacement + horsepower + cylinders + acceleration, data=auto)
+isl_sum <- summary(isl_fit)
+```
+
+Motivation
+========================================================
+
+* The MTCars dataset is commonly used as example data.
+    * Contains `r num_mtc_obs` observations for `r num_mtc_var` variables
+    * Standard R dataset component
+    * Includes: `r mt_names`
+* The Auto dataset from the ISLR library is somewhat richer.
+    * Contains `r num_isl_obs` observations for `r num_isl_var` variables
+    * Wider range of vehicles, including variations on same vehicle
+    * Includes: `r isl_names`
+
+More Data For Analysis
+========================================================
+MTCars mpg ~ disp
+```{r cars_comp, echo=FALSE}
+mt_pl <- ggplot(cars, aes(mpg, disp)) +
+    geom_point() +
+    geom_smooth()
+print(mt_pl)
+```
+***
+Auto mpg ~ displacement
+```{r auto_comp, echo=FALSE}
+isl_pl <- ggplot(auto, aes(mpg, displacement)) +
+    geom_point() +
+    geom_smooth()
+print(isl_pl)
+```
+
+Comparison of Multiple Regression Models 
+========================================================
+```{r rm, echo=FALSE}
+lm_form <- matrix(nrow=2, ncol=2)
+lm_form[1,1] <- "MTCars"
+lm_form[2,1] <- "Auto (ISLR)"
+lm_form[1,2] <- "lm(formula = mpg ~ wt + disp + hp + cyl + qsec, data = cars)"
+lm_form[2,2] <- "lm(formula = mpg ~ weight + displacement + horsepower + cylinders +   acceleration, data = auto)"
+kable(lm_form, col.names = c("Data","Formula"))
+
+coef_tbl <- NULL
+coef_tbl <- cbind(coef_tbl, c("(Intercept)", "wt/weight", "disp/displacement", "hp/horsepower", "cyl/cylinders", "qsec/acceleration"))
+coef_tbl <- cbind(coef_tbl, c(35.87361203, -4.22527033,  0.01194976, -0.01583910, -1.15608107,  0.25381843))
+coef_tbl <- cbind(coef_tbl, c( 4.626431e+01, -5.186917e-03, -8.313012e-05, -4.525708e-02, -3.979284e-01, -2.910471e-02))
+coef_tbl <- as.data.frame(coef_tbl)
+names(coef_tbl) <- c("Coefficents","MTCars", "Auto (ISLR)")
+knitr::kable(coef_tbl, col.names = colnames(coef_tbl))
+```
+
+Summary
+========================================================
+
+Both datasets have strengths and weaknesses
+
+```{r compare_table, echo=FALSE,message=FALSE,warning=FALSE}
+coln <- c("Compare","MTCars","Auto (ISLR)")
+var_list <- list("Variable Count","Unique Variables","Observations","Convenience","Other")
+mt_list <- list(num_mtc_var,"drat, vs, am, gear, carb",num_mtc_obs,"Built in","Carb, am, and drat are useful variables. Car names as rownames. Number of observations low.")
+isl_list <- list(num_isl_var,"year, origin, name",num_isl_obs,"Have to load ISLR library","Year and origin are useful variables. Car names as separate varible helpful. Many observations.")
+
+comp_df <- NULL
+comp_df <- as.data.frame(cbind(comp_df, var_list, mt_list, isl_list))
+knitr::kable(comp_df,col.names = coln)
+```
+

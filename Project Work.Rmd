@@ -1,0 +1,30 @@
+---
+title: "Project Work"
+author: "Harold Trammel"
+date: "December 18, 2015"
+output: html_document
+---
+
+```{r setup, echo=FALSE}
+require(quanteda)
+
+if (!file.exists("Data")) { dir.create("Data") }
+
+en_dir <- "Data/final/en_US"
+
+blogs_txt <- "en_US.blogs.txt"
+news_txt <- "en_US.news.txt"
+twit_txt <- "en_US.twitter.txt"
+
+en_blogs <- paste(en_dir, blogs_txt, sep="/")
+en_news <- paste(en_dir, news_txt, sep="/")
+en_twit <- paste(en_dir, twit_txt, sep="/")
+
+data_dir <- "Data"
+en_blg_rds <- paste(data_dir, "USblogs.Rds", sep="/")
+en_nws_rds <- paste(data_dir, "USnews.Rds", sep="/")
+en_twt_rds <- paste(data_dir, "UStwitter.Rds", sep="/")
+us_corpus_rds <- paste(data_dir, "us_corpus.Rds", sep="/")
+
+
+```

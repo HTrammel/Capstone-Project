@@ -1,0 +1,25 @@
+---
+title: "help"
+author: "Harold Trammel"
+date: "November 20, 2015"
+output: html_document
+---
+
+## Help for __Can I Guess__ 
+
+__Can I Guess__ has three tabs:
+
+* Main
+* Help
+* About
+
+### Main
+
+
+### Help 
+
+This document.
+
+### About 
+
+The description of this application and its sources.

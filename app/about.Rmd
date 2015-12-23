@@ -1,0 +1,13 @@
+---
+title: "about"
+author: "Harold Trammel"
+date: "November 18, 2015"
+output: html_document
+---
+## Can I guess ...
+
+### Description
+
+### Sources
+
+
