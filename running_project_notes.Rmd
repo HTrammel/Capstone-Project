@@ -113,6 +113,14 @@ The data sets for this project are reasonably large. It may cause problems for y
 
 ### Observations
 
+* tm is just too slow to use.
+* quanteda is excellent in terms of speed and functions.
+* stopwords should probably be left in for word prediction.  They add a lot of noise.
+* I am going to see about adding a profanity list to the corpus.  There are several to choose from.  I don't yet know how to use that for filtering.
+* I'm not sure how to handle the twitter language junk.
+* Capital letters are important for sentance pattern recognition. Hmmmm.
+* quanteda can build 1, 2, and 3 ngrams easily.  4 ngram has had some issues for people on the internet.
+
 
 ## Task 2 - Exploratory analysis
 The first step in building a predictive model for text is understanding the distribution and relationship between the words, tokens, and phrases in the text. The goal of this task is to understand the basic relationships you observe in the data and prepare to build your first linguistic models.

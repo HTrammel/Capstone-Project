@@ -127,21 +127,8 @@ pnorm(.95, 4, .3)
 pnorm(.9725, -4, 1.5)
 pnorm(.9725, 1, 1.8)
 pnorm(.9725, -4, 1.5) - pnorm(.9725, 1, 1.8)/18
-cd ../
-setwd("/Users/harold/Github/Coursera/Capstone-Project/")
-library(tm)
-library(filehashSQLlite)
-install.packages(filehashSQLite)
-install.packages("filehashSQLite")
-dir()
-source("explore_tm.R")
-tdm <- TermDocumentMatrix(pc, control=list(tokenize = NGramTokenizer))
-tdm <- TermDocumentMatrix("en_US.news.txt", control=list(tokenize = NGramTokenizer))
-meta(pc)
-source("explore_tm.R")
-?RSQLite
-dbDisconnect(s)
-dbDisconnect(db)
-source("explore_tm.R")
-source("explore_tm.R")
-source("explore_tm.R")
+?dfm
+library("quanteda")
+?dfm
+source("explore.R")
+source("explore.R")

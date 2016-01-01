@@ -9,5 +9,11 @@ output: html_document
 ### Description
 
 ### Sources
+#### Primary Text Sources
+The primary text sources were downloaded from the Coursera site.  This exercise uses the files named LOCALE.blogs.txt where LOCALE is the each of the four locales en_US, de_DE, ru_RU and fi_FI. For the purposes of this application, only the en_US files were used.
 
+The data is from a corpus called HC Corpora (www.corpora.heliohost.org). See the readme file at http://www.corpora.heliohost.org/aboutcorpus.html for details on the corpora available. The files have been language filtered but may still contain some foreign text.
+
+#### Profanity Filter Sources
+The profanity filtering is based on the sources from Banned Words List (http://www.bannedwordlist.com/).  Because several of the words in this list can be used in a non-offensive setting, I edited the list to be less restrictive yet still eliminating the more commonly offensive terms.
 

@@ -1,9 +1,6 @@
 # ui.R
 
 library(shiny)
-library(ggplot2)
-library(DT)
-library(caret)
 library(dplyr)
 
 palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
@@ -17,10 +14,14 @@ shinyUI(navbarPage(
         tabPanel("Main",
                  sidebarLayout(
                      sidebarPanel(
-                         textInput('text1', 'Type three words...'),
-                         submitButton("Submit")
+                        textInput('text1', 'Type three words...'),
+                        actionButton("submit", "Submit"),
+                        actionButton("reset", "Clear"),
+                        hr()
                      ),
-                     mainPanel(plotOutput("lmplot"))
+                     mainPanel(
+                         textOutput("tOut")
+                     )
                  )),
         tabPanel("Help",
                  fluidRow(column(

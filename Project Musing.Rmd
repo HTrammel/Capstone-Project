@@ -1,0 +1,21 @@
+---
+title: "Project Work"
+author: "Harold Trammel"
+date: "December 18, 2015"
+output: html_document
+---
+
+
+This is much more challenging than I want it to be.  
+
+The amount of text is substantial so small snips are being used for exploration and development.
+
+Any predictions need to be set up with a training and testing configuration.  K-fold?
+
+I have done the tokenization with unigram through quadgram, but how do I use this?
+
+"stupid" backoff is recommended in various places, but how to do this in R?
+
+PREDICTIONS APPROACHES
+
+The stupid backoff is well described in the paper from Google.  It uses MapReduce.

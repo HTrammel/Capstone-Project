@@ -1,0 +1,94 @@
+---
+title: "Milestone Report"
+author: "Harold Trammel"
+date: "December 29, 2015"
+output: html_document
+---
+
+## Progress To Date
+
+I am approaching this project in four phases.
+
+1. Load and explore the substantial set of text provided.
+2. Design and develop the application that will present the work done
+3. Explore, test, and gain skill with text mining tools and approaches
+4. Design and program the prediction algorithm that will to the work
+
+### Load and Explore the Sources
+
+I made the choice to focus on the English sources after some general perusal of the text.  The size of the source files was alluded to in the project instructions.  The three source files had the following statistics using 'wc' on my MacBook:
+
+File | Megabytes | Lines | Words
+-----|-----------|-------|------
+en_US.blogs.txt|210.2|899,288|37,334,690
+en_US.news.txt|205.8|1,010,242|34,372,720
+en_US.twitter.txt|167.1|2,360,148|30,374,206
+
+I used 'less' to browse through the text files to get a "feel" for their contents.  This confirmed the "non-standard" nature of the text.  I found "odd" hyphenation; all caps; non-English words and characters; and numbers used in "unusual" ways.
+
+Subsequent work with R text packages surfaced a number of "one-off" words that I plan to strip from the working corpus.
+
+I have decided to:
+
+* shift all the text to lower case
+* strip all inter-word punctuation (which leaves apostrophes and hyphens)
+* eliminate individual words that are used five or less times
+* remove all non-ASCII characters
+
+I have not decided on the following:
+
+* Should I eliminate numeric dates? _I probably will as these are not words as such._
+* Should I eliminate other numeric values? _I probably will as these are not words as such.  The words for numbers will obviously be retained._
+* How should I handle profanity? _I have downloaded a collection of obscene and offensive words, but there are legitimate words in the list.  I may edit the list to meet my standards.  There is also the question of how to handle profanity in the input stream._
+
+I have split each of the source text files into ten sub-files.  My current work is with the first tenth of each of the source text files.  A __quanteda__ Document-feature Matrix created from this working corpus contains 6,033,810 documents and 166,788 features (i.e. words).
+
+In this matrix, the following are the top 24 terms that appear:
+
+Term | Frequency|Term | Frequency
+-----|----------|-----|----------
+the|302961|it|53496
+to|175709|with|44591
+a|154221|at|41463
+and|147980|was|36339
+of|117603|be|35444
+in|109710|my|34576
+i|92103|have|32371
+for|76119|are|30909
+you|66921|this|29693
+is|66853|he|29568
+that|60966|but|28870
+on|56395|said|27618
+
+I should have realized it but the most common terms used are articles, prepositions, and "be" verb variants. Almost anything can be the next word with these terms.
+
+### Shiny App
+
+I have begun work on the Shiny application.  I am starting with the application I produced for the Data Products course.  The user will see three tabs: "Main", "Help", and "About".  The "Main" tab will have a text box labeled "Type three words", a Submit button, and a Clear button. There will also be an output area where I plan to show the five most likely next words (if five are available).
+
+I plan on the server component to have error checking for the following:
+
+* too few works
+* excessively long input (My previous boss broke Microsoft Word's tables by putting over 255 consecutive hyphens in a cell.)
+* all numbers, i.e. no words
+* perhaps a profanity checker
+
+### Working with R Text Mining Tools
+
+My initial work was with the __tm__ package. I started with 5% of the blog, news, and twitter source files and merged them into a single working corpus.  The _tokenization_ and _dtm_ performance was painful.  From comments in the Coursera forums, I shifted to the __quanteda__ package and am much happier with it.
+
+There are still performance issues when I try to work with larger percentages of the files.
+
+### Predictive Algorithm
+
+I am working towards using Google's "stupid backoff" approach to determine the next word.  The paper describing it (http://www.aclweb.org/anthology/D07-1090.pdf) used a distributed MapReduce model that is not appropriate for me.  I have been exploring ways to build and store a vocabulary of words and a collection of ngrams (from unigram to quadgram) and the relative frequency of use.  
+
+My initial work has consisted of building a vocabulary that will serve as a form of lookup table for other components.  The vocabulary will have each term's relative frequency.  The other component has been the ngram model.  Currently I am working on an approach that will store the ngram's as IDs that will reference the vocabulary table.
+
+I have mechanisms in place to divide the source material into training and testing but I have not yet discovered or thought of an automated testing mechanism for my work.
+
+## Personal Assessment
+
+I am not as far along as I wanted to be at this time.  I got bogged down trying to make __tm__ my core package.  I have also been struggling with storage and memory sizes with the sample data.  I think I have a clearer picture of my path, but welcome any feedback.
+
+
