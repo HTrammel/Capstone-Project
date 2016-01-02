@@ -1,10 +1,11 @@
 #---------------------------------------------------------------------
 #
-# Explore_Backoff.R
+# load_corpus.R
 #
-# Purpose: Implementation of "stupid backoff"
+# Purpose: Explore text files provided for class
 #
 #---------------------------------------------------------------------
+require(tm)
 require(quanteda)
 require(data.table)
 require(dplyr)
@@ -12,8 +13,8 @@ require(dplyr)
 if (!file.exists("Data")) { dir.create("Data") }
 
 bottom <- 5
-training <- 10
-CLEAN <- FALSE
+training <- 1
+CLEAN <- TRUE
 
 # sources
 data_dir <- "Data"
@@ -53,19 +54,19 @@ setup_source <- function() {
                       src_type = c("blog","news","twitter")),
                 stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
-                    src_file = c("Data/final/en_US/en_US.blogs.txt",
-                                 "Data/final/en_US/en_US.news.txt",
-                                 "Data/final/en_US/en_US.twitter.txt"),
+                    src_file = c("Data/final/en_US/samp_blog.txt",
+                                 "Data/final/en_US/samp_news.txt",
+                                 "Data/final/en_US/samp_twit.txt"),
                     stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
                     src_name = c("en_blog","en_news","en_twit"),
                     stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
-                    src_lines = c(899288L,1010242L,2360148L))
+                    src_lines = c(1000L,1000L,1000L))
     tmp_df <- cbind(tmp_df,
-                    src_rds = c("Data/USblogs.Rds",
-                                "Data/USnews.Rds",
-                                "Data/UStwitter.Rds"),
+                    src_rds = c("Data/samp_blogs.Rds",
+                                "Data/samp_news.Rds",
+                                "Data/samp_twit.Rds"),
                     stringsAsFactors = F)
     return(tmp_df)
 }
@@ -80,11 +81,10 @@ get_data <- function(df, stp) {
     tmp <- scan(con,
                 what = "complex",
                 nlines = maxlines,
-                skip = maxlines * stp,
+                skip = maxlines * 0,
                 encoding = "UTF-8",
                 blank.lines.skip = TRUE,
                 skipNul = TRUE)
-    tmp <- gsub("&", "and", tmp)
     tmp <- my.cleaning.function(tmp)
     outfile <- paste(paste(stp, df$src_name, sep = "_"), "Rds", sep = ".")
     saveRDS(tmp, paste(data_dir, outfile, sep ="/"))
@@ -100,7 +100,7 @@ load_text <- function(flag) {
     print("Loading text files")
     for (i in 1:3) {
         r <- src_df[i,]
-        for (j in 1:10) {
+        for (j in 1:training) {
             get_data(r, j)
         }
     }
@@ -124,6 +124,7 @@ map_vocabulary <- function(lines) {
                        removeTwitter = TRUE
                        )
     words <- do.call(c, chunks)
+    #words <- as.factor(words)
 }
 
 #---------------------------------------------------
@@ -142,6 +143,20 @@ map_ngrams <- function(lines) {
                        ngrams = 1:5
                     )
     words <- do.call(c, chunks)
+    #words <- as.factor(words)
+}
+
+#---------------------------------------------------
+# function to reduce terms to smaller form
+#---------------------------------------------------
+reduce_map <- function(terms) {
+    word_freq <- table(terms)
+    my_dt <- data.table(word_freq)
+    # setkey(my_dt, N)
+    # my_dt <- my_dt[N > bottom]
+    # my_dt[order(-N)]
+    # my_dt[1] <- as.factor(my_dt[1])
+    # my_dt
 }
 
 
@@ -151,21 +166,22 @@ load_text( CLEAN )
 if (!file.exists("Data/en_all.Rds")){
 
     blog1 <- readRDS("Data/1_en_blog.Rds")
-    blog3 <- readRDS("Data/3_en_blog.Rds")
+    #blog3 <- readRDS("Data/3_en_blog.Rds")
     #blog5 <- readRDS("Data/5_en_blog.Rds")
-    b <- c(blog1, blog3) #, blog5)
+    b <- c(blog1) #, blog3, blog5)
 
     news1 <- readRDS("Data/1_en_news.Rds")
-    news3 <- readRDS("Data/3_en_news.Rds")
+    #news3 <- readRDS("Data/3_en_news.Rds")
     #news5 <- readRDS("Data/5_en_news.Rds")
-    b <- c(news1, news3) #, news5)
+    n <- c(news1) #, news3, news5)
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
-    twit3 <- readRDS("Data/3_en_twit.Rds")
+    #twit3 <- readRDS("Data/3_en_twit.Rds")
     #twit5 <- readRDS("Data/5_en_twit.Rds")
-    t <- c(twit1, twit3) #, twit5)
+    t <- c(twit1) #, twit3, twit5)
 
     en_all <- as.character(c(b,n,t))
+    rm("b","n","t")
 
     saveRDS(en_all, "Data/en_all.Rds")
 } else if (!exists("en_all")) {
@@ -187,11 +203,13 @@ if (!file.exists("Data/n_grams.Rds")) {
   n_grams <- readRDS("Data/n_grams.Rds")
 }
 
+#r_vocab <- reduce_map(vocab)
+
 
 voc_dfm <- dfm(vocab)
 voc_colo <- collocations(vocab, method = "lr", size = c(2,3))
-voc_colo <- voc_colo %>% filter( count >= 25 )
-saveRDS(voc_colo, "Data/voc_colo.Rds")
 
-ng_dfm <- dfm(n_grams, ngram=1:3, removeSeparators = FALSE)
-#ng_colo <- collocations(n_grams, method = "lr", size = c(2.3))
+ng_dfm <- dfm(n_grams, ngram=1:4, removeSeparators = FALSE)
+
+# voc_dtm <- convert(voc_dfm, to = "tm" )
+# ng_dtm <- convert(ng_dfm, to = "tm" )

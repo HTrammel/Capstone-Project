@@ -2,16 +2,34 @@
 
 library(shiny)
 library(dplyr)
+library(stringr)
 library(shinythemes)
 
-set.seed(1972)
 
+set.seed(1972)
 setwd(".")
+voc_df <- readRDS("data/voc_collo.RDS")
+
+checkText <- function(txt) {
+    t <- as.character(str_split_fixed(txt, " ", n = 5))
+    for (i in 1:5) {
+        if (!t[i] == "" && !t[i] == "[0-9]*") {
+            m <- c(t[i])
+            err <- TRUE
+        } else {
+            err <- FALSE
+        }
+    }
+    return (c(t[1], t[2], t[3], err))
+}
 
 server <- function(input, output, session) {
-    output$inOut <- renderText(paste("You entered:",input$text1,sep=" "))
+    inText <- reactive(checkText(input$text1))
+    output$inOut <- renderText(paste("You entered:",input$text1, sep=" "))
 
-    output$guesses <- renderTable(data.frame(word=c("I","don't","know"),freq=c(0,0,0)))
+    output$status <- renderText(inText[5])
+
+    output$guesses <- renderTable(data.frame(word = inText[1:3], freq = c(0,0,0)))
 }
 
 ui <- navbarPage(
