@@ -33,12 +33,12 @@ my.cleaning.function <- function(text) {
 }
 
 parallel.clean <- function(text) {
-    cl <- makeCluster(3)
-    clusterExport(cl, "my.cleaning.function")
-    clusterEvalQ(cl, library(stringi))
-    text.clean <- parSapply(cl, text, my.cleaning.function, USE.NAMES=FALSE)
-    stopCluster(cl)
-    text.clean
+  cl <- makeCluster(3)
+  clusterExport(cl, "my.cleaning.function")
+  clusterEvalQ(cl, library(stringi))
+  text.clean <- parSapply(cl, text, my.cleaning.function, USE.NAMES=FALSE)
+  stopCluster(cl)
+  text.clean
 }
 #----------------------------------------------------------------------
 
@@ -49,9 +49,9 @@ parallel.clean <- function(text) {
 setup_source <- function() {
     tmp_df <- NULL
     tmp_df <- data.frame(
-        cbind(tmp_df,
-              src_type = c("blog","news","twitter")),
-        stringsAsFactors = F)
+                cbind(tmp_df,
+                      src_type = c("blog","news","twitter")),
+                stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
                     src_file = c("Data/final/en_US/en_US.blogs.txt",
                                  "Data/final/en_US/en_US.news.txt",
@@ -96,17 +96,17 @@ get_data <- function(df, stp) {
 # call get_data incrementally
 #---------------------------------------------------
 load_text <- function(flag) {
-    if (flag == TRUE) {
-        print("Loading text files")
-        for (i in 1:3) {
-            r <- src_df[i,]
-            for (j in 1:10) {
-                get_data(r, j)
-            }
+  if (flag == TRUE) {
+    print("Loading text files")
+    for (i in 1:3) {
+        r <- src_df[i,]
+        for (j in 1:10) {
+            get_data(r, j)
         }
-    } else {
-        print("...As is")
     }
+  } else {
+    print("...As is")
+  }
 }
 
 
@@ -116,13 +116,13 @@ load_text <- function(flag) {
 map_vocabulary <- function(lines) {
     print("Making vocabulary")
     lines <- toLower(lines)
-    chunks <- dfm(lines,
-                  what = "word",
-                  removeSeparators = TRUE,
-                  removeNumbers = TRUE,
-                  removePunct = TRUE,
-                  removeTwitter = TRUE
-    )
+    chunks <- tokenize(lines,
+                       what = "word",
+                       removeSeparators = TRUE,
+                       removeNumbers = TRUE,
+                       removePunct = TRUE,
+                       removeTwitter = TRUE
+                       )
     words <- do.call(c, chunks)
 }
 
@@ -132,15 +132,11 @@ map_vocabulary <- function(lines) {
 map_ngrams <- function(lines) {
     print("Making ngrams")
     lines <- toLower(lines)
-    chunks <- dfm(lines,
-                  what = "word",
-                  removeSeparators = TRUE,
-                  removeNumbers = TRUE,
-                  removePunct = TRUE,
-                  removeTwitter = TRUE,
-                  concatenator = " ",
-                  ngrams = 1:2
-    )
+    chunks <- collocations(lines,
+                       what = "word",
+                       method = "lr",
+                       size = 2
+                    )
     words <- do.call(c, chunks)
 }
 
@@ -154,16 +150,19 @@ if (!file.exists("Data/en_all.Rds")){
     blog3 <- readRDS("Data/3_en_blog.Rds")
     #blog5 <- readRDS("Data/5_en_blog.Rds")
     b <- c(blog1, blog3) #, blog5)
+    rm(blog1, blog3)
 
     news1 <- readRDS("Data/1_en_news.Rds")
     news3 <- readRDS("Data/3_en_news.Rds")
     #news5 <- readRDS("Data/5_en_news.Rds")
     b <- c(news1, news3) #, news5)
+    rm(news1, news3)
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
     twit3 <- readRDS("Data/3_en_twit.Rds")
     #twit5 <- readRDS("Data/5_en_twit.Rds")
     t <- c(twit1, twit3) #, twit5)
+    rm(twit1, twit3)
 
     en_all <- as.character(c(b,n,t))
 
@@ -174,17 +173,17 @@ if (!file.exists("Data/en_all.Rds")){
 
 
 if (!file.exists("Data/vocab.Rds")) {
-    vocab <- map_vocabulary(en_all)
-    saveRDS(vocab, "Data/vocab.Rds")
+  vocab <- map_vocabulary(en_all)
+  saveRDS(vocab, "Data/vocab.Rds")
 } else if (!exists("vocab")) {
-    vocab <- readRDS("Data/vocab.Rds")
+  vocab <- readRDS("Data/vocab.Rds")
 }
 
 if (!file.exists("Data/n_grams.Rds")) {
-    n_grams <- map_ngrams(en_all)
-    saveRDS(n_grams, "Data/n_grams.Rds")
+  n_grams <- map_ngrams(vocab)
+  saveRDS(n_grams, "Data/n_grams.Rds")
 } else if (!exists("n_grams")) {
-    n_grams <- readRDS("Data/n_grams.Rds")
+  n_grams <- readRDS("Data/n_grams.Rds")
 }
 
 
@@ -192,6 +191,6 @@ voc_dfm <- dfm(vocab)
 voc_colo <- collocations(vocab, method = "lr", size = c(2,3))
 voc_colo <- voc_colo %>% filter( count >= 25 )
 saveRDS(voc_colo, "Data/voc_colo.Rds")
-
-ng_dfm <- dfm(n_grams, ngram=1:3, removeSeparators = FALSE)
+#
+# ng_dfm <- dfm(n_grams, ngram=1:3, removeSeparators = FALSE)
 #ng_colo <- collocations(n_grams, method = "lr", size = c(2.3))
