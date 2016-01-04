@@ -1,10 +1,6 @@
-#---------------------------------------------------------------------
-#
-# load_corpus.R
-#
-# Purpose: Explore text files provided for class
-#
-#---------------------------------------------------------------------
+#=====================================================================
+# explore_mini_v1r1.R
+#=====================================================================
 require(tm)
 require(quanteda)
 require(data.table)
@@ -85,7 +81,7 @@ get_data <- function(df, stp) {
                 encoding = "UTF-8",
                 blank.lines.skip = TRUE,
                 skipNul = TRUE)
-    tmp <- my.cleaning.function(tmp)
+    tmp <- parallel.clean(tmp)
     outfile <- paste(paste(stp, df$src_name, sep = "_"), "Rds", sep = ".")
     saveRDS(tmp, paste(data_dir, outfile, sep ="/"))
     close(con)
@@ -96,89 +92,82 @@ get_data <- function(df, stp) {
 # call get_data incrementally
 #---------------------------------------------------
 load_text <- function(flag) {
-  if (flag == TRUE) {
-    print("Loading text files")
-    for (i in 1:3) {
-        r <- src_df[i,]
-        for (j in 1:training) {
-            get_data(r, j)
+    if (flag == TRUE) {
+        cat("Removing working files...\n")
+        rm(list = c("Data/vc_samp.Rds",
+                    "Data/ng_samp.Rds",
+                    "Data/vocab_samp.Rds"))
+
+        cat("Loading text files...\n")
+        for (i in 1:3) {
+            r <- src_df[i,]
+            for (j in 1:training) {
+                get_data(r, j)
+            }
         }
+    } else {
+        cat("...As is\n")
     }
-  } else {
-    print("...As is")
-  }
 }
 
+#---------------------------------------------------
+# function to map vocabulary from sources
+#---------------------------------------------------
+make_corpus <- function(lines) {
+    lines <- toLower(lines)
+    cat("Making corpus\n")
+    chunks <- corpus(lines, source = "Data/final/en_US/en_sources.txt")
+}
 
 #---------------------------------------------------
 # function to map vocabulary from sources
 #---------------------------------------------------
 map_vocabulary <- function(lines) {
-    print("Making vocabulary")
     lines <- toLower(lines)
+    cat("Making vocabulary\n")
     chunks <- tokenize(lines,
                        what = "word",
+                       verbose = TRUE,
+                       simplify = TRUE,
                        removeSeparators = TRUE,
                        removeNumbers = TRUE,
-                       removePunct = TRUE,
-                       removeTwitter = TRUE
-                       )
-    words <- do.call(c, chunks)
-    #words <- as.factor(words)
+                       # removePunct = TRUE,
+                       removeTwitter = TRUE,
+                       concatenator = "_",
+                       ngrams = 1:6
+    )
 }
 
 #---------------------------------------------------
 # function to create ngrams from source text files
 #---------------------------------------------------
 map_ngrams <- function(lines) {
-    print("Making ngrams")
     lines <- toLower(lines)
-    chunks <- tokenize(lines,
-                       what = "word",
-                       removeSeparators = TRUE,
-                       removeNumbers = TRUE,
-                       removePunct = TRUE,
-                       removeTwitter = TRUE,
-                       concatenator = " ",
-                       ngrams = 1:5
-                    )
-    words <- do.call(c, chunks)
-    #words <- as.factor(words)
+    cat("Making ngrams\n")
+    chunks <- collocations(lines,
+                   what = "word",
+                   method = "lr",
+                   spanPunct = FALSE,
+                   size = 2:3
+                )
 }
-
-#---------------------------------------------------
-# function to reduce terms to smaller form
-#---------------------------------------------------
-reduce_map <- function(terms) {
-    word_freq <- table(terms)
-    my_dt <- data.table(word_freq)
-    # setkey(my_dt, N)
-    # my_dt <- my_dt[N > bottom]
-    # my_dt[order(-N)]
-    # my_dt[1] <- as.factor(my_dt[1])
-    # my_dt
-}
-
 
 src_df <- setup_source()
 load_text( CLEAN )
 
 if (!file.exists("Data/en_all.Rds")){
-
+    cat("...Building en_all\n")
     blog1 <- readRDS("Data/1_en_blog.Rds")
-    #blog3 <- readRDS("Data/3_en_blog.Rds")
-    #blog5 <- readRDS("Data/5_en_blog.Rds")
     b <- c(blog1) #, blog3, blog5)
+    rm("blog1")
 
     news1 <- readRDS("Data/1_en_news.Rds")
-    #news3 <- readRDS("Data/3_en_news.Rds")
-    #news5 <- readRDS("Data/5_en_news.Rds")
     n <- c(news1) #, news3, news5)
+    rm("news1")
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
-    #twit3 <- readRDS("Data/3_en_twit.Rds")
-    #twit5 <- readRDS("Data/5_en_twit.Rds")
     t <- c(twit1) #, twit3, twit5)
+    rm("twit1")
 
     en_all <- as.character(c(b,n,t))
     rm("b","n","t")
@@ -189,27 +178,31 @@ if (!file.exists("Data/en_all.Rds")){
 }
 
 
-if (!file.exists("Data/vocab.Rds")) {
-  vocab <- map_vocabulary(en_all)
-  saveRDS(vocab, "Data/vocab.Rds")
+if (!file.exists("Data/vocab_corp.Rds")) {
+    voc_corpus <- make_corpus(en_all)
+    saveRDS(voc_corpus, "Data/vocab_corp.Rds")
+} else if (!exists("voc_corpus")) {
+    voc_corpus <- readRDS("Data/vocab_corp.Rds")
+}
+
+if (!file.exists("Data/vocab_samp.Rds")) {
+    vocab <- map_vocabulary(en_all)
+    saveRDS(vocab, "Data/vocab_samp.Rds")
 } else if (!exists("vocab")) {
-  vocab <- readRDS("Data/vocab.Rds")
+    vocab <- readRDS("Data/vocab_samp.Rds")
 }
 
-if (!file.exists("Data/n_grams.Rds")) {
-  n_grams <- map_ngrams(en_all)
-  saveRDS(n_grams, "Data/n_grams.Rds")
+if (!file.exists("Data/ng_samp.Rds")) {
+  n_grams <- map_ngrams(vocab)
+  saveRDS(n_grams, "Data/ng_samp.Rds")
 } else if (!exists("n_grams")) {
-  n_grams <- readRDS("Data/n_grams.Rds")
+  n_grams <- readRDS("Data/ng_samp.Rds")
 }
-
-#r_vocab <- reduce_map(vocab)
-
 
 voc_dfm <- dfm(vocab)
-voc_colo <- collocations(vocab, method = "lr", size = c(2,3))
-
-ng_dfm <- dfm(n_grams, ngram=1:4, removeSeparators = FALSE)
-
-# voc_dtm <- convert(voc_dfm, to = "tm" )
-# ng_dtm <- convert(ng_dfm, to = "tm" )
+voc_colo <- collocations(vocab,
+                         method = "lr",
+                         spanPunct = FALSE,
+                         size = c(2,3))
+voc_colo <- voc_colo %>% filter( count >= 5 )
+saveRDS(voc_colo, "Data/vc_samp.Rds")

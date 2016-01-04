@@ -29,7 +29,7 @@ server <- function(input, output, session) {
 
     output$status <- renderText(inText[5])
 
-    output$guesses <- renderTable(data.frame(word = inText[1:3], freq = c(0,0,0)))
+    output$guesses <- renderTable(data.frame(word = output$status[1:3], freq = c(0,0,0)))
 }
 
 ui <- navbarPage(

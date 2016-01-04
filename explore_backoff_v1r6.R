@@ -85,7 +85,9 @@ get_data <- function(df, stp) {
                 blank.lines.skip = TRUE,
                 skipNul = TRUE)
     tmp <- gsub("&", "and", tmp)
-    tmp <- my.cleaning.function(tmp)
+    # tmp <- my.cleaning.function(tmp)
+    tmp <- parallel.clean(tmp)
+
     outfile <- paste(paste(stp, df$src_name, sep = "_"), "Rds", sep = ".")
     saveRDS(tmp, paste(data_dir, outfile, sep ="/"))
     close(con)
@@ -148,20 +150,20 @@ if (!file.exists("Data/en_all.Rds")){
 
     blog1 <- readRDS("Data/1_en_blog.Rds")
     blog3 <- readRDS("Data/3_en_blog.Rds")
-    #blog5 <- readRDS("Data/5_en_blog.Rds")
-    b <- c(blog1, blog3) #, blog5)
+    blog5 <- readRDS("Data/5_en_blog.Rds")
+    b <- c(blog1, blog3, blog5)
     rm(blog1, blog3)
 
     news1 <- readRDS("Data/1_en_news.Rds")
     news3 <- readRDS("Data/3_en_news.Rds")
-    #news5 <- readRDS("Data/5_en_news.Rds")
-    b <- c(news1, news3) #, news5)
+    news5 <- readRDS("Data/5_en_news.Rds")
+    b <- c(news1, news3, news5)
     rm(news1, news3)
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
     twit3 <- readRDS("Data/3_en_twit.Rds")
-    #twit5 <- readRDS("Data/5_en_twit.Rds")
-    t <- c(twit1, twit3) #, twit5)
+    twit5 <- readRDS("Data/5_en_twit.Rds")
+    t <- c(twit1, twit3, twit5)
     rm(twit1, twit3)
 
     en_all <- as.character(c(b,n,t))
