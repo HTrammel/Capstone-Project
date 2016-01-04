@@ -1,6 +1,6 @@
-#=====================================================================
-# explore_mini_v1r1.R
-#=====================================================================
+#---------------------------------------------------------------------
+# Explore_Backoff.R
+#---------------------------------------------------------------------
 require(tm)
 require(quanteda)
 require(data.table)
@@ -9,7 +9,7 @@ require(dplyr)
 if (!file.exists("Data")) { dir.create("Data") }
 
 bottom <- 5
-training <- 1
+training <- 10
 CLEAN <- TRUE
 
 # sources
@@ -50,19 +50,19 @@ setup_source <- function() {
                       src_type = c("blog","news","twitter")),
                 stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
-                    src_file = c("Data/final/en_US/samp_blog.txt",
-                                 "Data/final/en_US/samp_news.txt",
-                                 "Data/final/en_US/samp_twit.txt"),
+                    src_file = c("Data/final/en_US/en_US.blogs.txt",
+                                 "Data/final/en_US/en_US.news.txt",
+                                 "Data/final/en_US/en_US.twitter.txt"),
                     stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
                     src_name = c("en_blog","en_news","en_twit"),
                     stringsAsFactors = F)
     tmp_df <- cbind(tmp_df,
-                    src_lines = c(1000L,1000L,1000L))
+                    src_lines = c(899288L,1010242L,2360148L))
     tmp_df <- cbind(tmp_df,
-                    src_rds = c("Data/samp_blogs.Rds",
-                                "Data/samp_news.Rds",
-                                "Data/samp_twit.Rds"),
+                    src_rds = c("Data/USblogs.Rds",
+                                "Data/USnews.Rds",
+                                "Data/UStwitter.Rds"),
                     stringsAsFactors = F)
     return(tmp_df)
 }
@@ -77,12 +77,14 @@ get_data <- function(df, stp) {
     tmp <- scan(con,
                 what = "complex",
                 nlines = maxlines,
-                skip = maxlines * 0,
+                skip = maxlines * stp,
                 fileEncoding = "UTF-16LE",
                 encoding = "ASCII",
                 blank.lines.skip = TRUE,
+                na.strings = "",
                 skipNul = TRUE)
     tmp <- parallel.clean(tmp)
+
     outfile <- paste(paste(stp, df$src_name, sep = "_"), "Rds", sep = ".")
     saveRDS(tmp, paste(data_dir, outfile, sep ="/"))
     close(con)
@@ -93,22 +95,22 @@ get_data <- function(df, stp) {
 # call get_data incrementally
 #---------------------------------------------------
 load_text <- function(flag) {
-    if (flag == TRUE) {
-        cat("Removing working files...\n")
-        # rm(list = c("Data/vc_samp.Rds",
-        #             "Data/ng_samp.Rds",
-        #             "Data/vocab_samp.Rds"))
+  if (flag == TRUE) {
+    cat("Removing working files...\n")
+    # rm(list = c("Data/corpus.Rds",
+    #             "Data/n_gram.Rds",
+    #             "Data/vocab.Rds"))
 
         cat("Loading text files...\n")
-        for (i in 1:3) {
-            r <- src_df[i,]
-            for (j in 1:training) {
-                get_data(r, j)
-            }
+    for (i in 1:3) {
+        r <- src_df[i,]
+        for (j in 1:10) {
+            get_data(r, j)
         }
-    } else {
-        cat("...As is\n")
     }
+  } else {
+    print("...As is")
+  }
 }
 
 #---------------------------------------------------
@@ -117,7 +119,8 @@ load_text <- function(flag) {
 make_corpus <- function(lines) {
     lines <- toLower(lines)
     cat("Making corpus\n")
-    chunks <- corpus(lines)
+    chunks <- corpus(lines,
+							verbose = TRUE)
 }
 
 #---------------------------------------------------
@@ -129,15 +132,16 @@ map_vocabulary <- function(lines) {
     chunks <- tokenize(lines,
                        what = "word",
                        verbose = TRUE,
-                       simplify = TRUE,
+                       simplify = FALSE,
                        removeSeparators = TRUE,
                        removeNumbers = TRUE,
                        # removePunct = TRUE,
-                       removeTwitter = TRUE,
-                       concatenator = "_",
-                       ngrams = 1:6
+                       removeTwitter = TRUE #,
+                       # concatenator = "_",
+                       # ngrams = 1:4
     )
 }
+
 
 #---------------------------------------------------
 # function to create ngrams from source text files
@@ -145,33 +149,34 @@ map_vocabulary <- function(lines) {
 map_ngrams <- function(lines) {
     lines <- toLower(lines)
     cat("Making ngrams\n")
-    chunks <- collocations(lines,
-                   what = "word",
-                   method = "lr",
-                   spanPunct = FALSE,
-                   size = 2:3
-                )
+    chunks <- ngrams(lines, n = c(1,4) )
 }
+
 
 src_df <- setup_source()
 load_text( CLEAN )
 
 if (!file.exists("Data/en_all.Rds")){
-    cat("...Building en_all\n")
+
     blog1 <- readRDS("Data/1_en_blog.Rds")
-    b <- c(blog1) #, blog3, blog5)
-    rm("blog1")
+    blog3 <- readRDS("Data/3_en_blog.Rds")
+    blog5 <- readRDS("Data/5_en_blog.Rds")
+    b <- c(blog1, blog3, blog5)
+    rm(blog1, blog3, blog5)
 
     news1 <- readRDS("Data/1_en_news.Rds")
-    n <- c(news1) #, news3, news5)
-    rm("news1")
+    news3 <- readRDS("Data/3_en_news.Rds")
+    news5 <- readRDS("Data/5_en_news.Rds")
+    b <- c(news1, news3, news5)
+    rm(news1, news3, news5)
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
-    t <- c(twit1) #, twit3, twit5)
-    rm("twit1")
+    twit3 <- readRDS("Data/3_en_twit.Rds")
+    twit5 <- readRDS("Data/5_en_twit.Rds")
+    t <- c(twit1, twit3, twit5)
+    rm(twit1, twit3, twit5)
 
     en_all <- as.character(c(b,n,t))
-    rm("b","n","t")
 
     saveRDS(en_all, "Data/en_all.Rds")
 } else if (!exists("en_all")) {
@@ -188,23 +193,24 @@ if (!file.exists("Data/vocab_corp.Rds")) {
     voc_corpus <- readRDS("Data/vocab_corp.Rds")
 }
 
-if (!file.exists("Data/vocab_samp.Rds")) {
+if (!file.exists("Data/vocab.Rds")) {
     cat("...going to make vocabulary\n")
-    vocab <- map_vocabulary(en_all)
-    saveRDS(vocab, "Data/vocab_samp.Rds")
+  vocab <- map_vocabulary(voc_corpus)
+  saveRDS(vocab, "Data/vocab.Rds")
 } else if (!exists("vocab")) {
     cat("...reading vocabulary from file\n")
-    vocab <- readRDS("Data/vocab_samp.Rds")
+  vocab <- readRDS("Data/vocab.Rds")
 }
 
-if (!file.exists("Data/ng_samp.Rds")) {
+if (!file.exists("Data/n_grams.Rds")) {
   cat("...going to make n_grams\n")
   n_grams <- map_ngrams(vocab)
-  saveRDS(n_grams, "Data/ng_samp.Rds")
+  saveRDS(n_grams, "Data/n_grams.Rds")
 } else if (!exists("n_grams")) {
   cat("... reading n_grams from file\n")
-  n_grams <- readRDS("Data/ng_samp.Rds")
+  n_grams <- readRDS("Data/n_grams.Rds")
 }
+
 
 voc_dfm <- dfm(vocab)
 voc_colo <- collocations(vocab,
@@ -212,4 +218,4 @@ voc_colo <- collocations(vocab,
                          spanPunct = FALSE,
                          size = c(2,3))
 voc_colo <- voc_colo %>% filter( count >= 5 )
-saveRDS(voc_colo, "Data/vc_samp.Rds")
+saveRDS(voc_colo, "Data/vc_full.Rds")

@@ -1,10 +1,7 @@
 #---------------------------------------------------------------------
-#
 # Explore_Backoff.R
-#
-# Purpose: Implementation of "stupid backoff"
-#
 #---------------------------------------------------------------------
+require(tm)
 require(quanteda)
 require(data.table)
 require(dplyr)
@@ -13,7 +10,7 @@ if (!file.exists("Data")) { dir.create("Data") }
 
 bottom <- 5
 training <- 10
-CLEAN <- FALSE
+CLEAN <- TRUE
 
 # sources
 data_dir <- "Data"
@@ -99,7 +96,12 @@ get_data <- function(df, stp) {
 #---------------------------------------------------
 load_text <- function(flag) {
   if (flag == TRUE) {
-    print("Loading text files")
+    cat("Removing working files...\n")
+    rm(list = c("Data/vc_samp.Rds",
+                "Data/ng_samp.Rds",
+                "Data/vocab_samp.Rds"))
+
+        cat("Loading text files...\n")
     for (i in 1:3) {
         r <- src_df[i,]
         for (j in 1:10) {
@@ -111,35 +113,47 @@ load_text <- function(flag) {
   }
 }
 
+#---------------------------------------------------
+# function to map vocabulary from sources
+#---------------------------------------------------
+make_corpus <- function(lines) {
+    lines <- toLower(lines)
+    cat("Making corpus\n")
+    chunks <- corpus(lines, source = "Data/final/en_US/en_sources.txt")
+}
 
 #---------------------------------------------------
 # function to map vocabulary from sources
 #---------------------------------------------------
 map_vocabulary <- function(lines) {
-    print("Making vocabulary")
     lines <- toLower(lines)
+    cat("Making vocabulary\n")
     chunks <- tokenize(lines,
                        what = "word",
+                       verbose = TRUE,
+                       simplify = TRUE,
                        removeSeparators = TRUE,
                        removeNumbers = TRUE,
-                       removePunct = TRUE,
-                       removeTwitter = TRUE
-                       )
-    words <- do.call(c, chunks)
+                       # removePunct = TRUE,
+                       removeTwitter = TRUE,
+                       concatenator = "_",
+                       ngrams = 1:6
+    )
 }
+
 
 #---------------------------------------------------
 # function to create ngrams from source text files
 #---------------------------------------------------
 map_ngrams <- function(lines) {
-    print("Making ngrams")
     lines <- toLower(lines)
+    cat("Making ngrams\n")
     chunks <- collocations(lines,
-                       what = "word",
-                       method = "lr",
-                       size = 2
-                    )
-    words <- do.call(c, chunks)
+                   what = "word",
+                   method = "lr",
+                   spanPunct = FALSE,
+                   size = 2:3
+                )
 }
 
 
@@ -174,6 +188,13 @@ if (!file.exists("Data/en_all.Rds")){
 }
 
 
+if (!file.exists("Data/vocab_corp.Rds")) {
+    voc_corpus <- make_corpus(en_all)
+    saveRDS(voc_corpus, "Data/vocab_corp.Rds")
+} else if (!exists("voc_corpus")) {
+    voc_corpus <- readRDS("Data/vocab_corp.Rds")
+}
+
 if (!file.exists("Data/vocab.Rds")) {
   vocab <- map_vocabulary(en_all)
   saveRDS(vocab, "Data/vocab.Rds")
@@ -190,9 +211,9 @@ if (!file.exists("Data/n_grams.Rds")) {
 
 
 voc_dfm <- dfm(vocab)
-voc_colo <- collocations(vocab, method = "lr", size = c(2,3))
-voc_colo <- voc_colo %>% filter( count >= 25 )
-saveRDS(voc_colo, "Data/voc_colo.Rds")
-#
-# ng_dfm <- dfm(n_grams, ngram=1:3, removeSeparators = FALSE)
-#ng_colo <- collocations(n_grams, method = "lr", size = c(2.3))
+voc_colo <- collocations(vocab,
+                         method = "lr",
+                         spanPunct = FALSE,
+                         size = c(2,3))
+voc_colo <- voc_colo %>% filter( count >= 5 )
+saveRDS(voc_colo, "Data/vc_samp.Rds")
