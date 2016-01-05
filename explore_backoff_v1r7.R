@@ -119,8 +119,7 @@ load_text <- function(flag) {
 make_corpus <- function(lines) {
     lines <- toLower(lines)
     cat("Making corpus\n")
-    chunks <- corpus(lines,
-							verbose = TRUE)
+    chunks <- corpus(lines)
 }
 
 #---------------------------------------------------
