@@ -127,20 +127,14 @@ pnorm(.95, 4, .3)
 pnorm(.9725, -4, 1.5)
 pnorm(.9725, 1, 1.8)
 pnorm(.9725, -4, 1.5) - pnorm(.9725, 1, 1.8)/18
-source("explore_backoff_v1r6.R")
+source("/Users/harold/Github/Coursera/Capstone-Project/explore_backoff_v1r7.R")
+str(n_grams)
+head(n_grams)
+head(vocab)
 head(voc_colo)
-tail(voc_colo, 20)
-q1 <- voc_colo %>% filter (word1 == "department" & word2 =="and")
-q2 <- voc_colo %>% filter (word2 == "and" & word3 =="the")
-right_join(q1,g2,by ="and")
-right_join(q1,q2,by ="and")
-q1
-q2
-q2 <- voc_colo %>% filter (word1 == "and" & word2 =="the")
-right_join(q1,q2,by ="and")
-inner_join(q1,q2,by ="and")
-intersect(q1,q2)
-q2
-full_join(q1,q2,by ="and")
-t1 <- voc_colo
-library(sqldf)
+voc_colo[,word1 == "and" & word2 == "i'd"]
+voc_colo[voc_colo[,word1 == "and" & word2 == "i'd"]]
+voc_colo[voc_colo[,word1 == "and" & word2 == "I'd"]]
+voc_colo[voc_colo[,word2 == "and" & word3 == "I'd"]]
+voc_colo[voc_colo[,word1 == "monkeys" & word2 == "this"]]
+voc_colo[voc_colo[,word1 == "monkeys"]]
