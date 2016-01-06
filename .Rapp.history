@@ -127,14 +127,31 @@ pnorm(.95, 4, .3)
 pnorm(.9725, -4, 1.5)
 pnorm(.9725, 1, 1.8)
 pnorm(.9725, -4, 1.5) - pnorm(.9725, 1, 1.8)/18
-source("/Users/harold/Github/Coursera/Capstone-Project/explore_backoff_v1r7.R")
-str(n_grams)
-head(n_grams)
-head(vocab)
-head(voc_colo)
-voc_colo[,word1 == "and" & word2 == "i'd"]
-voc_colo[voc_colo[,word1 == "and" & word2 == "i'd"]]
-voc_colo[voc_colo[,word1 == "and" & word2 == "I'd"]]
-voc_colo[voc_colo[,word2 == "and" & word3 == "I'd"]]
-voc_colo[voc_colo[,word1 == "monkeys" & word2 == "this"]]
-voc_colo[voc_colo[,word1 == "monkeys"]]
+source("/Users/harold/Github/Coursera/Capstone-Project/explore_mini_v1r2.R")
+source("/Users/harold/Github/Coursera/Capstone-Project/explore_mini_v1r2.R")
+source("/var/folders/6c/9yxmklyx0wlcnhxwhz21wt700000gn/T//RtmpDiLHcO/file23f4acf2a72")#
+unlink("/var/folders/6c/9yxmklyx0wlcnhxwhz21wt700000gn/T//RtmpDiLHcO/file23f4acf2a72")
+source("/Users/harold/Github/Coursera/Capstone-Project/explore_mini_v1r2.R")
+source("/Users/harold/Github/Coursera/Capstone-Project/explore_mini_v1r2.R")
+str(samp_corp)
+str(samp_corpus)
+str(samp_vocab)
+str(samp_tokens)
+str(voc_dfm)
+voc_dfm[Dimnames]
+voc_dfm.Dimnames
+voc_dfm@Dimnames
+str(voc_dfm)
+voc_dfm@Dimnames$features
+str(voc_dfm)
+voc_df <- tbl_df(voc_dfm@Dimnames$features, voc_dfm@Dimnames$p)
+voc_df <- tbl_df(voc_dfm@Dimnames$features, voc_dfm@p)
+voc_df <- tbl_df(voc_dfm@Dimnames$features)
+voc_df <- data.frame(voc_dfm@Dimnames$features)
+voc_df <- data.frame(voc_dfm@Dimnames$features, voc{dfm@p)
+voc_df <- data.frame(voc_dfm@Dimnames$features, voc_dfm@p)
+voc_df <- data.frame(voc_dfm@Dimnames$features, voc_dfm@p[2:38952])
+View(voc_df)
+tail(voc_df)
+names(voc_df) <- c("id", "feature", "freq")
+names(voc_df) <- c("feature", "freq")

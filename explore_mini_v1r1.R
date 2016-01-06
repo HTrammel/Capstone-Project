@@ -78,6 +78,7 @@ get_data <- function(df, stp) {
                 what = "complex",
                 nlines = maxlines,
                 skip = maxlines * 0,
+                # fileEncoding = "ISO-8859-2",
                 fileEncoding = "UTF-16LE",
                 encoding = "ASCII",
                 blank.lines.skip = TRUE,
@@ -127,7 +128,7 @@ make_corpus <- function(lines) {
 #---------------------------------------------------
 # function to map vocabulary from sources
 #---------------------------------------------------
-map_vocabulary <- function(lines) {
+make_vocab <- function(lines) {
     lines <- toLower(lines)
     cat("Making vocabulary\n")
     chunks <- tokenize(lines,
@@ -209,14 +210,14 @@ if (!file.exists("Data/corp_samp.Rds")) {
     voc_corpus <- readRDS("Data/corp_samp.Rds")
 }
 
-# if (!file.exists("Data/vocab_samp.Rds")) {
-#     cat("...going to make vocabulary\n")
-#     vocab <- map_vocabulary(voc_corpus)
-#     saveRDS(vocab, "Data/vocab_samp.Rds")
-# } else if (!exists("vocab")) {
-#     cat("...reading vocabulary from file\n")
-#     vocab <- readRDS("Data/vocab_samp.Rds")
-# }
+if (!file.exists("Data/vocab_samp.Rds")) {
+    cat("...going to make vocabulary\n")
+    vocab <- make_vocab(voc_corpus)
+    saveRDS(vocab, "Data/vocab_samp.Rds")
+} else if (!exists("vocab")) {
+    cat("...reading vocabulary from file\n")
+    vocab <- readRDS("Data/vocab_samp.Rds")
+}
 
 # if (!file.exists("Data/ng_samp.Rds")) {
 #   cat("...going to make n_grams\n")
@@ -227,13 +228,13 @@ if (!file.exists("Data/corp_samp.Rds")) {
 #   n_grams <- readRDS("Data/ng_samp.Rds")
 # }
 
-# voc_dfm <- dfm(vocab)
-# voc_colo <- collocations(vocab,
-#                          method = "lr",
-#                          spanPunct = FALSE,
-#                          size = c(2,3))
-# voc_colo <- voc_colo %>% filter( count >= 5 )
-# saveRDS(voc_colo, "Data/vc_samp.Rds")
+voc_dfm <- dfm(vocab)
+voc_colo <- collocations(vocab,
+                         method = "lr",
+                         spanPunct = FALSE,
+                         size = c(2,3))
+voc_colo <- voc_colo %>% filter( count >= 5 )
+saveRDS(voc_colo, "Data/vc_samp.Rds")
 
 
 cat("...going to make ngrams\n")
