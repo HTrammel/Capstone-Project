@@ -78,11 +78,18 @@ samp_tokens <- tokenize(samp_corpus,
 cat("Making dfm\n")
 voc_dfm <- dfm(samp_tokens)
 
-cat("Making collocations\n")
-voc_colo <- collocations(samp_tokens,
-                         method = "lr",
-                         spanPunct = FALSE,
-                         n = NULL,
-                         size = 2
-)
+# cat("Making collocations\n")
+# voc_colo <- collocations(samp_tokens,
+#                          method = "lr",
+#                          spanPunct = FALSE,
+#                          n = NULL,
+#                          size = 2
+# )
+
+voc_freq <- colSums(voc_dfm)
+voc_names <- names(voc_freq)
+voc_df <- data_frame(voc_names, voc_freq)
+saveRDS(voc_df,"Data/voc_df.Rds")
+
+rm(list=c("voc_freq","voc_names"))
 
