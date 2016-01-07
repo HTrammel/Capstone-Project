@@ -2,7 +2,6 @@
 # explore_mini_v1r1.R
 #=====================================================================
 require(quanteda)
-require(data.table)
 require(dplyr)
 
 #----------------------------------------------------------------------
@@ -50,16 +49,16 @@ cat("Making corpus\n")
 samp_corpus <- corpus(txt)
 rm(txt)
 
-cat("Making vocabulary\n")
-samp_vocab <- tokenize(samp_corpus,
-                   what = "word",
-                   verbose = TRUE,
-                   simplify = FALSE,
-                   removeSeparators = TRUE,
-                   removeNumbers = TRUE,
-                   removePunct = TRUE,
-                   removeTwitter = TRUE
-              )
+# cat("Making vocabulary\n")
+# samp_vocab <- tokenize(samp_corpus,
+#                    what = "word",
+#                    verbose = TRUE,
+#                    simplify = FALSE,
+#                    removeSeparators = TRUE,
+#                    removeNumbers = TRUE,
+#                    removePunct = TRUE,
+#                    removeTwitter = TRUE
+#               )
 
 cat("Making tokens\n")
 samp_tokens <- tokenize(samp_corpus,
@@ -76,20 +75,14 @@ samp_tokens <- tokenize(samp_corpus,
                   )
 
 cat("Making dfm\n")
-voc_dfm <- dfm(samp_tokens)
+samp_dfm <- dfm(samp_tokens)
 
-# cat("Making collocations\n")
-# voc_colo <- collocations(samp_tokens,
-#                          method = "lr",
-#                          spanPunct = FALSE,
-#                          n = NULL,
-#                          size = 2
-# )
+samp_freq <- colSums(samp_dfm)
+samp_names <- names(samp_freq)
+samp_df <- data_frame(samp_names, samp_freq)
+samp_df <- samp_df %>% mutate(word_count = stri_count_words(samp_names))
 
-voc_freq <- colSums(voc_dfm)
-voc_names <- names(voc_freq)
-voc_df <- data_frame(voc_names, voc_freq)
-saveRDS(voc_df,"Data/voc_df.Rds")
+saveRDS(voc_df,"Data/samp_df.Rds")
 
-rm(list=c("voc_freq","voc_names"))
+#rm(list=c("samp_freq","samp_names"))
 

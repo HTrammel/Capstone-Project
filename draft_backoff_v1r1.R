@@ -88,6 +88,7 @@ get_data <- function(df, stp) {
     outfile <- paste(paste(stp, df$src_name, sep = "_"), "Rds", sep = ".")
     saveRDS(tmp, paste(data_dir, outfile, sep ="/"))
     close(con)
+    rm(con)
 }
 
 #---------------------------------------------------
@@ -123,22 +124,22 @@ make_corpus <- function(lines) {
     chunks <- corpus(lines)
 }
 
-#---------------------------------------------------
-# function to map vocabulary from sources
-#---------------------------------------------------
-make_vocab <- function(lines) {
-    lines <- toLower(lines)
-    cat("Making vocabulary\n")
-    chunks <- tokenize(lines,
-                       what = "word",
-                       verbose = TRUE,
-                       simplify = FALSE,
-                       removeSeparators = TRUE,
-                       removeNumbers = TRUE,
-                       removePunct = TRUE,
-                       removeTwitter = TRUE
-                    )
-}
+# #---------------------------------------------------
+# # function to map vocabulary from sources
+# #---------------------------------------------------
+# make_vocab <- function(lines) {
+#     lines <- toLower(lines)
+#     cat("Making vocabulary\n")
+#     chunks <- tokenize(lines,
+#                        what = "word",
+#                        verbose = TRUE,
+#                        simplify = FALSE,
+#                        removeSeparators = TRUE,
+#                        removeNumbers = TRUE,
+#                        removePunct = TRUE,
+#                        removeTwitter = TRUE
+#                     )
+# }
 
 #---------------------------------------------------
 # function to map vocabulary from sources
@@ -160,7 +161,6 @@ make_tokens <- function(lines) {
                     )
 }
 
-
 src_df <- setup_source()
 load_text( CLEAN )
 
@@ -175,7 +175,7 @@ if (!file.exists("Data/en_all.Rds")){
     news1 <- readRDS("Data/1_en_news.Rds")
     news3 <- readRDS("Data/3_en_news.Rds")
     news5 <- readRDS("Data/5_en_news.Rds")
-    b <- c(news1, news3, news5)
+    n <- c(news1, news3, news5)
     rm(news1, news3, news5)
 
     twit1 <- readRDS("Data/1_en_twit.Rds")
@@ -185,6 +185,7 @@ if (!file.exists("Data/en_all.Rds")){
     rm(twit1, twit3, twit5)
 
     en_all <- as.character(c(b,n,t))
+    rm(b, n, t)
 
     saveRDS(en_all, "Data/en_all.Rds")
 } else if (!exists("en_all")) {
@@ -201,37 +202,28 @@ if (!file.exists("Data/vocab_corp.Rds")) {
     voc_corpus <- readRDS("Data/vocab_corp.Rds")
 }
 
-if (!file.exists("Data/vocab.Rds")) {
-    cat("...going to make vocabulary\n")
-  vocab <- make_vocab(voc_corpus)
-  saveRDS(vocab, "Data/vocab.Rds")
-} else if (!exists("vocab")) {
-    cat("...reading vocabulary from file\n")
-  vocab <- readRDS("Data/vocab.Rds")
-}
-
 if (!file.exists("Data/voc_tokens.Rds")) {
   cat("...going to make voc_tokens\n")
   voc_tokens <- make_tokens(voc_corpus)
   saveRDS(voc_tokens, "Data/voc_tokens.Rds")
 } else if (!exists("voc_tokens")) {
-  cat("... reading voc_tokens from file\n")
+  cat("...reading voc_tokens from file\n")
   voc_tokens <- readRDS("Data/voc_tokens.Rds")
 }
 
-cat(".Making DFM\n")
-voc_dfm <- dfm(vocab)
-cat(".Making Frequency\n")
+cat("Making DFM\n")
+voc_dfm <- dfm(voc_tokens)
+cat("Making Frequency\n")
 voc_freq <- colSums(voc_dfm)
-cat(".Making Names\n")
+cat("Making Names\n")
 voc_names <- names(voc_freq)
-cat(".Making Data Frame\n")
+cat("Making Data Frame\n")
 voc_df <- data_frame(voc_names, voc_freq)
+voc_df <- voc_df %>% mutate(word_count = stri_count_words(voc_names))
 saveRDS(voc_df,"Data/voc_df.Rds")
 
-#rm(list=c("voc_freq",
-#         "voc_names",
-#          "vocab",
-#         "voc_corpus",
-#         "en_all"
-#         ))
+rm(list=c("voc_freq",
+            "voc_names",
+            "voc_corpus",
+            "en_all"
+        ))
