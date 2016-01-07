@@ -213,13 +213,20 @@ if (!file.exists("Data/voc_tokens.Rds")) {
 
 cat("Making DFM\n")
 voc_dfm <- dfm(voc_tokens)
+
 cat("Making Frequency\n")
 voc_freq <- colSums(voc_dfm)
+voc_tot <- sum(voc_freq)
+
 cat("Making Names\n")
 voc_names <- names(voc_freq)
+
 cat("Making Data Frame\n")
 voc_df <- data_frame(voc_names, voc_freq)
+voc_df <- voc_df %>% mutate(rel_freq = voc_freq/voc_tot)
 voc_df <- voc_df %>% mutate(word_count = stri_count_words(voc_names))
+
+cat("Saving Data Frame\n")
 saveRDS(voc_df,"Data/voc_df.Rds")
 
 rm(list=c("voc_freq",

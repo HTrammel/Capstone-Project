@@ -78,11 +78,13 @@ cat("Making dfm\n")
 samp_dfm <- dfm(samp_tokens)
 
 samp_freq <- colSums(samp_dfm)
+samp_tot <- sum(samp_freq)
 samp_names <- names(samp_freq)
 samp_df <- data_frame(samp_names, samp_freq)
+samp_df <- samp_df %>% mutate(rel_freq = samp_freq/samp_tot)
 samp_df <- samp_df %>% mutate(word_count = stri_count_words(samp_names))
 
-saveRDS(voc_df,"Data/samp_df.Rds")
+saveRDS(samp_df,"Data/samp_df.Rds")
 
 #rm(list=c("samp_freq","samp_names"))
 
