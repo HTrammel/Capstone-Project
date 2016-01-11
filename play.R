@@ -1,26 +1,40 @@
-library(stringr)
-library(dplyr)
-library(sqldf)
+#=================================================
+# map_vocab_ngrams_v1r1.R
+#=================================================
 
-vc1 <- readRDS("Data/voc_colo.RDS")
-vc2 <- vc1
+require(quanteda)
+require(dplyr)
+require(stringr)
 
-r <- sqldf('select v1.word1, v1.word2, v1.word3, v2.word1, v2.word2, v2.word3
-           from vc1 as v1, vc2 as v2 where v1.word3 = v2.word1
-           and v1.word1 = "department"')
+if (!exists("voc_mini_df")) {
+    voc_mini_df <- readRDS("Data/voc_mini_df.Rds")
+}
+if (!exists("ng_mini_df")) {
+    ng_mini_df <- readRDS("Data/ng_mini_df.Rds")
+}
 
-# status <- function(txt) {
-#     t <- as.character(str_split_fixed(txt, " ", n = 5))
-#     for (i in 1:5) {
-#         if (!t[i] == "" && !t[i] == "[0-9]*") {
-#             m <- c(t[i])
-#             err <- TRUE
-#         } else {
-#             err <- FALSE
-#         }
-#     }
-#     return (c(t[1], t[2], t[3], err))
-# }
-#
-# o <- status("1 boy played the")
-# print(o)
+getID <- function(in_word) {
+    id <- voc_mini_df[which(voc_mini_df$voc_term == in_word), "id"]
+}
+
+getWord <- function(in_id) {
+    word <- voc_mini_df[which(voc_mini_df$id == in_id), "voc_term"]
+}
+
+t <- ng_mini_df[388,1]
+
+t_words <- str_split(t, " ")
+
+print(t_words)
+
+t_word <- NULL
+
+t <- as.list(ng_mini_df[i,])
+tw_list <- str_split(t$ng_term, " ")
+
+for (j in 1:lengths(tw_list)) {
+    tw <- sapply(tw_list, "[[" , j)
+    cat("word:", tw, "\n")
+    tmp_id <- getID(tw)
+    t_word <- paste(t_word, tmp_id)
+}

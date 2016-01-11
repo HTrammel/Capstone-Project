@@ -8,7 +8,16 @@ library(shinythemes)
 
 set.seed(1972)
 setwd(".")
-voc_df <- readRDS("data/voc_collo.RDS")
+vocab_df <- readRDS("Data/vocab_df.Rds")
+
+getID <- function(in_word) {
+    id <- vocab_df[which(vocab_df$voc_term == in_word), "id"]
+}
+
+getWord <- function(in_id) {
+    word <- vocab_df[which(vocab_df$id == in_id), "voc_term"]
+}
+
 
 checkText <- function(txt) {
     t <- as.character(str_split_fixed(txt, " ", n = 5))
