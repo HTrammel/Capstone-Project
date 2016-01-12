@@ -71,7 +71,7 @@ samp_ngrams <- tokenize(samp_corpus,
                    removeHyphens = TRUE,
                    concatenator = " ",
                    skip = 0L,
-                   ngrams = 1:4
+                   ngrams = 1:5
                   )
 
 cat("Making dfm\n")
@@ -84,7 +84,7 @@ voc_mini_df <- voc_mini_df %>% mutate(rel_freq = voc_freq/voc_mini_tot)
 id <- c(1:nrow(voc_mini_df))
 voc_mini_df <- voc_mini_df %>% arrange(desc(rel_freq))
 voc_mini_df <- cbind(id, voc_mini_df)
-voc_mini_df$id[voc_mini_df$voc_freq <= 4] <- 0
+#voc_mini_df$id[voc_mini_df$voc_freq <= 4] <- 0
 saveRDS(voc_mini_df,"Data/voc_mini_df.Rds")
 
 ng_mini_dfm <- dfm(samp_ngrams,
