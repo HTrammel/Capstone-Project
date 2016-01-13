@@ -101,8 +101,8 @@ ng_mini_df <- ng_mini_df %>% arrange(desc(rel_freq))
 ng_mini_df <- cbind(ng_mini_df,id)
 saveRDS(ng_mini_df,"Data/ng_mini_df.Rds")
 
-rm(list = c("voc_mini_freq","voc_mini_tot","voc_mini_names","id","voc_mini_dfm"))
-rm(list = c("con","ng_mini_freq","ng_mini_tot","ng_mini_names","ng_mini_dfm"))
-rm(list = c("samp_corpus","samp_ngrams","samp_vocab","src_file","maxlines"))
+# rm(list = c("voc_mini_freq","voc_mini_tot","voc_mini_names","id","voc_mini_dfm"))
+# rm(list = c("con","ng_mini_freq","ng_mini_tot","ng_mini_names","ng_mini_dfm"))
+# rm(list = c("samp_corpus","samp_ngrams","samp_vocab","src_file","maxlines"))
 
-
+c <- collocations(samp_corpus, method = "lr", size = 2)
